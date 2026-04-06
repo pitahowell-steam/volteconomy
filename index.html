@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚡ Volt Economy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#7C3AED;--purple-lt:#EDE9FE;--purple-dk:#4C1D95;
+  --blue:#2563EB;--blue-lt:#DBEAFE;--blue-dk:#1E3A8A;
+  --teal:#0D9488;--teal-lt:#CCFBF1;--teal-dk:#134E4A;
+  --green:#16A34A;--green-lt:#DCFCE7;--green-dk:#14532D;
+  --yellow:#CA8A04;--yellow-lt:#FEF9C3;--yellow-bg:#FEF08A;
+  --orange:#EA580C;--orange-lt:#FFEDD5;--orange-dk:#7C2D12;
+  --pink:#DB2777;--pink-lt:#FCE7F3;--pink-dk:#831843;
+  --red:#DC2626;--red-lt:#FEE2E2;--red-dk:#7F1D1D;
+  --gold:#F59E0B;--gold-lt:#FEF3C7;--gold-dk:#78350F;
+  --bg:#F1F0FF;
+  --card:#fff;--border:#E5E7EB;
+  --text:#1F2937;--muted:#6B7280;
+  --r-sm:12px;--r-md:18px;--r-lg:24px;--r-xl:32px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color:var(--text)}
+.hidden{display:none!important}
+
+/* ── NAV ─────────────────────────── */
+nav{
+  background:linear-gradient(135deg,#4C1D95 0%,#7C3AED 60%,#6D28D9 100%);
+  padding:0 24px;display:flex;align-items:center;justify-content:space-between;
+  height:62px;position:sticky;top:0;z-index:200;
+  border-bottom:3px solid #5B21B6;
+}
+.logo{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+.logo-bolt{font-size:28px}
+.logo-sub{font-size:11px;font-weight:600;color:#C4B5FD;letter-spacing:1px;text-transform:uppercase;display:block;line-height:1}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-pill{background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);color:#fff;
+  padding:7px 16px;border-radius:50px;cursor:pointer;font-size:13px;font-weight:700;
+  font-family:'Nunito',sans-serif;transition:all .15s}
+.nav-pill:hover{background:rgba(255,255,255,.28);transform:translateY(-1px)}
+.who-pill{background:rgba(255,255,255,.12);color:#DDD6FE;
+  padding:5px 14px;border-radius:50px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.2)}
+
+/* ── LOGIN ───────────────────────── */
+#login-screen{min-height:calc(100vh - 62px);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-hero{text-align:center;max-width:640px;width:100%}
+.login-hero-icon{font-size:72px;margin-bottom:12px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.login-hero h1{font-size:42px;font-weight:900;color:var(--purple-dk);margin-bottom:6px}
+.login-hero h1 span{color:var(--purple)}
+.login-hero p{font-size:15px;color:var(--muted);margin-bottom:32px;font-weight:600}
+.login-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.login-card{background:var(--card);border-radius:var(--r-xl);border:3px solid var(--border);
+  padding:32px 24px;text-align:center;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 0 #E5E7EB}
+.login-card:hover{border-color:var(--purple);transform:translateY(-4px);box-shadow:0 8px 0 #DDD6FE}
+.login-card:active{transform:translateY(0);box-shadow:0 2px 0 #DDD6FE}
+.login-card .lc-icon{font-size:48px;margin-bottom:12px;display:block}
+.login-card h2{font-size:20px;font-weight:900;color:var(--purple-dk);margin-bottom:6px}
+.login-card p{font-size:13px;color:var(--muted);font-weight:600}
+.board-btn{display:inline-flex;align-items:center;gap:8px;background:var(--purple-lt);
+  color:var(--purple-dk);border:2px solid #DDD6FE;padding:12px 24px;border-radius:50px;
+  cursor:pointer;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;
+  transition:all .15s}
+.board-btn:hover{background:#DDD6FE;transform:translateY(-2px)}
+
+/* ── FORMS ───────────────────────── */
+.form-wrap{min-height:calc(100vh - 62px);display:flex;align-items:center;justify-content:center;padding:20px}
+.form-box{background:var(--card);border-radius:var(--r-xl);border:3px solid var(--border);
+  padding:32px;max-width:420px;width:100%;box-shadow:0 6px 0 #E5E7EB}
+.form-box h2{font-size:22px;font-weight:900;color:var(--purple-dk);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.field-label{display:block;font-size:13px;font-weight:800;color:var(--purple-dk);margin-bottom:6px;margin-top:16px;text-transform:uppercase;letter-spacing:.5px}
+.field-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:var(--r-md);
+  font-size:15px;font-family:'Nunito',sans-serif;outline:none;font-weight:600;color:var(--text);
+  transition:border-color .15s}
+.field-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-lt)}
+.back-link{color:var(--purple);cursor:pointer;font-size:13px;font-weight:700;margin-top:14px;display:inline-flex;align-items:center;gap:4px}
+.back-link:hover{text-decoration:underline}
+
+/* ── BUTTONS ─────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:11px 22px;border-radius:50px;
+  font-size:14px;font-weight:800;cursor:pointer;border:none;font-family:'Nunito',sans-serif;
+  transition:all .15s;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.15)}
+.btn:active{transform:translateY(1px);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.btn-purple{background:var(--purple);color:#fff;box-shadow:0 4px 0 var(--purple-dk)}
+.btn-purple:hover{background:#6D28D9;box-shadow:0 6px 0 var(--purple-dk)}
+.btn-gold{background:var(--gold);color:#fff;box-shadow:0 4px 0 var(--gold-dk)}
+.btn-gold:hover{background:#D97706;box-shadow:0 6px 0 var(--gold-dk)}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green-dk)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 4px 0 var(--red-dk)}
+.btn-teal{background:var(--teal);color:#fff;box-shadow:0 4px 0 var(--teal-dk)}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 4px 0 var(--blue-dk)}
+.btn-ghost{background:var(--purple-lt);color:var(--purple-dk);box-shadow:0 4px 0 #DDD6FE;border:2px solid #DDD6FE}
+.btn-sm{padding:7px 16px;font-size:12px}
+.btn-block{width:100%;justify-content:center;margin-top:16px;padding:14px}
+
+/* ── PAGE ────────────────────────── */
+.page{max-width:1120px;margin:0 auto;padding:24px 18px}
+
+/* ── TABS ────────────────────────── */
+.tab-bar{display:flex;gap:6px;background:var(--card);border-radius:var(--r-xl);padding:6px;
+  border:2px solid var(--border);margin-bottom:24px;flex-wrap:wrap}
+.tab-btn{padding:10px 20px;border-radius:50px;font-size:13px;font-weight:800;color:var(--muted);
+  cursor:pointer;border:none;background:none;font-family:'Nunito',sans-serif;transition:all .15s}
+.tab-btn.active{background:var(--purple);color:#fff;box-shadow:0 3px 0 var(--purple-dk)}
+.tab-btn:hover:not(.active){background:var(--purple-lt);color:var(--purple-dk)}
+
+/* ── CARDS ───────────────────────── */
+.card{background:var(--card);border-radius:var(--r-lg);border:2px solid var(--border);padding:20px;
+  box-shadow:0 3px 0 #E5E7EB}
+.card-title{font-size:15px;font-weight:900;color:var(--purple-dk);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.fun-grid{display:grid;gap:14px}
+.fun-grid-2{grid-template-columns:repeat(2,1fr)}
+.fun-grid-3{grid-template-columns:repeat(3,1fr)}
+
+/* ── STAT CHIPS ──────────────────── */
+.stat-chip{border-radius:var(--r-lg);padding:18px;text-align:center}
+.stat-chip .sc-val{font-size:36px;font-weight:900;line-height:1}
+.stat-chip .sc-lbl{font-size:11px;font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.chip-gold{background:var(--gold-lt);border:2px solid #FDE68A}
+.chip-gold .sc-val{color:var(--gold-dk)}
+.chip-gold .sc-lbl{color:var(--yellow)}
+.chip-green{background:var(--green-lt);border:2px solid #BBF7D0}
+.chip-green .sc-val{color:var(--green-dk)}
+.chip-green .sc-lbl{color:var(--green)}
+.chip-red{background:var(--red-lt);border:2px solid #FECACA}
+.chip-red .sc-val{color:var(--red-dk)}
+.chip-red .sc-lbl{color:var(--red)}
+
+/* ── SECTION HEADER ──────────────── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.sec-hdr h2{font-size:20px;font-weight:900;color:var(--purple-dk);display:flex;align-items:center;gap:8px}
+
+/* ── ALERTS ──────────────────────── */
+.alert{padding:12px 16px;border-radius:var(--r-md);font-size:13px;font-weight:700;margin-bottom:12px}
+.alert-ok{background:var(--green-lt);color:var(--green-dk);border:2px solid #BBF7D0}
+.alert-bad{background:var(--red-lt);color:var(--red-dk);border:2px solid #FECACA}
+.alert-info{background:var(--blue-lt);color:var(--blue-dk);border:2px solid #BFDBFE}
+
+/* ── GROUP ROWS ──────────────────── */
+.group-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:2px solid #F3F4F6;flex-wrap:wrap}
+.group-row:last-child{border-bottom:none}
+.group-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:3px solid}
+.group-info{flex:1;min-width:80px}
+.group-name{font-size:15px;font-weight:900;color:var(--purple-dk)}
+.group-card-lbl{font-size:11px;font-weight:700;color:var(--muted)}
+.group-bal{font-size:22px;font-weight:900;min-width:80px}
+.group-actions{display:flex;gap:7px;flex-wrap:wrap}
+
+/* ── EDIT ROWS ───────────────────── */
+.edit-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:2px solid #F9FAFB;flex-wrap:wrap}
+.edit-row:last-child{border-bottom:none}
+.edit-icon{font-size:22px;width:32px;text-align:center;flex-shrink:0}
+.edit-name{flex:1;font-weight:800;color:var(--text);font-size:13px;min-width:100px}
+.edit-note{font-size:11px;color:var(--muted);font-weight:600;flex:1;min-width:80px}
+.price-tag{background:var(--gold-lt);color:var(--gold-dk);border:2px solid #FDE68A;
+  padding:4px 12px;border-radius:50px;font-size:13px;font-weight:900}
+.tier-pill{padding:3px 10px;border-radius:50px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0}
+.tp0{background:var(--green-lt);color:var(--green-dk)}
+.tp1{background:var(--blue-lt);color:var(--blue-dk)}
+.tp2{background:var(--gold-lt);color:var(--gold-dk)}
+.tp3{background:var(--orange-lt);color:var(--orange-dk)}
+.tp4{background:var(--red-lt);color:var(--red-dk)}
+
+/* ── LEDGER TABLE ────────────────── */
+.ledger{width:100%;border-collapse:collapse;font-size:13px}
+.ledger th{background:var(--purple);color:#fff;padding:10px 12px;text-align:left;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.ledger th:first-child{border-radius:12px 0 0 0}
+.ledger th:last-child{border-radius:0 12px 0 0}
+.ledger td{padding:10px 12px;border-bottom:2px solid #F3F4F6;font-weight:600}
+.ledger tr:last-child td{border-bottom:none}
+.ledger tr:nth-child(even) td{background:#F9FAFB}
+.earn-td{color:var(--green-dk);font-weight:900}
+.spend-td{color:var(--red-dk);font-weight:900}
+.fine-td{color:var(--orange-dk);font-weight:900}
+
+/* ── STORE GRID ──────────────────── */
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.store-card{background:var(--card);border:2px solid var(--border);border-radius:var(--r-lg);padding:16px;position:relative;transition:all .2s;box-shadow:0 3px 0 #E5E7EB}
+.store-card.can-afford{border-color:#86EFAC;box-shadow:0 3px 0 #BBF7D0}
+.store-card.cant-afford{opacity:.55}
+.store-card h4{font-size:13px;font-weight:800;color:var(--text);margin-bottom:4px;padding-right:48px}
+.store-card p{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.store-price{font-size:18px;font-weight:900;color:var(--gold-dk)}
+.afford-badge{font-size:10px;font-weight:900;color:var(--green-dk);background:var(--green-lt);
+  padding:2px 8px;border-radius:50px;display:inline-block;margin-top:4px}
+
+/* ── EARN TABLE ──────────────────── */
+.earn-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.earn-tbl th{background:var(--teal);color:#fff;padding:10px 12px;text-align:left;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.earn-tbl th:first-child{border-radius:12px 0 0 0}
+.earn-tbl th:last-child{border-radius:0 12px 0 0}
+.earn-tbl td{padding:10px 12px;border-bottom:2px solid #F3F4F6;vertical-align:top;font-weight:600}
+.earn-tbl tr:nth-child(even) td{background:#F0FDFA}
+.earn-badge{background:var(--teal-lt);color:var(--teal-dk);border:2px solid #99F6E4;
+  padding:3px 10px;border-radius:50px;font-size:12px;font-weight:900;display:inline-block}
+.tier-section-label{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:var(--r-md);
+  font-size:13px;font-weight:900;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.4px}
+
+/* ── MODAL ───────────────────────── */
+.modal-overlay{display:flex;align-items:center;justify-content:center;min-height:300px;
+  background:rgba(76,29,149,.25);border-radius:var(--r-xl);margin:-4px;padding:20px}
+.modal-box{background:var(--card);border-radius:var(--r-xl);padding:28px;max-width:440px;width:100%;
+  border:3px solid var(--purple-lt);box-shadow:0 8px 0 #DDD6FE}
+.modal-title{font-size:18px;font-weight:900;color:var(--purple-dk);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+
+/* ══════════════════════════════════
+   BOARD VIEW
+══════════════════════════════════ */
+#board-page{background:linear-gradient(160deg,#060D1F 0%,#0F172A 45%,#1A1040 100%);min-height:calc(100vh - 62px);position:relative;overflow:hidden}
+#board-stars{position:absolute;inset:0;pointer-events:none;z-index:0}
+#board-page .page{position:relative;z-index:1;max-width:1400px}
+
+.board-top{text-align:center;padding:16px 0 4px}
+.board-logo{font-size:38px;font-weight:900;color:#fff;letter-spacing:-1px}
+.board-logo span{color:#FCD34D}
+.board-tagline{font-size:14px;font-weight:700;color:#A5B4FC;margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+
+/* TICKER */
+.ticker-wrap{background:rgba(0,0,0,.4);border-top:2px solid rgba(165,180,252,.2);border-bottom:2px solid rgba(165,180,252,.2);padding:8px 0;margin:14px 0;overflow:hidden}
+.ticker-inner{display:flex;gap:48px;animation:ticker 38s linear infinite;white-space:nowrap}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-chip{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:rgba(255,255,255,.85);font-weight:700}
+.ticker-gem{width:8px;height:8px;border-radius:50%;background:#FCD34D;flex-shrink:0}
+
+/* BOARD GRID */
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:16px}
+
+/* GROUP CARDS ON BOARD */
+.bcard{
+  border-radius:24px;padding:20px 16px;text-align:center;position:relative;overflow:hidden;
+  transition:transform .25s;cursor:default;border:3px solid transparent;
+}
+.bcard:hover{transform:translateY(-4px)}
+.bcard-normal{background:#1E2D5A;border-color:#3B5299}
+.bcard-leader{background:#3D2A00;border-color:#F59E0B}
+.bcard-low{background:#3D0F0F;border-color:#EF4444}
+.bcard-warn{background:#3D1F00;border-color:#F97316}
+
+/* rank badge */
+.brank{position:absolute;top:0;left:0;padding:5px 12px;border-radius:0 0 14px 0;font-size:12px;font-weight:900;letter-spacing:.3px}
+.brank-1{background:#FCD34D;color:#78350F}
+.brank-2{background:#D1D5DB;color:#1F2937}
+.brank-3{background:#D97706;color:#fff}
+.brank-n{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+
+.bname{font-size:15px;font-weight:900;color:#fff;margin:10px 0 2px}
+.bcard-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-bottom:10px}
+
+/* animated counter */
+.bvolts{font-size:58px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;transition:color .4s}
+.bvolts-normal{color:#FCD34D}
+.bvolts-leader{color:#FFE500}
+.bvolts-low{color:#FF6B6B}
+.bvolts-warn{color:#FFB347}
+@keyframes bumpUp{0%{transform:scale(1)}40%{transform:scale(1.2);color:#86EFAC}100%{transform:scale(1)}}
+@keyframes bumpDown{0%{transform:scale(1)}40%{transform:scale(.88);color:#FCA5A5}100%{transform:scale(1)}}
+.bump-up{animation:bumpUp .5s ease}
+.bump-down{animation:bumpDown .5s ease}
+
+.bunit{font-size:12px;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+
+/* delta float */
+.bdelta{position:absolute;top:46px;right:14px;font-size:14px;font-weight:900;padding:3px 8px;border-radius:50px;pointer-events:none;opacity:0}
+@keyframes deltaUp{0%{opacity:1;transform:translateY(0)}70%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+.bdelta.show{animation:deltaUp 2.6s ease forwards}
+
+/* bar */
+.bbar-wrap{margin-top:12px;height:8px;background:rgba(255,255,255,.18);border-radius:50px;overflow:hidden}
+.bbar{height:100%;border-radius:50px;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
+
+/* board status text */
+.bstatus{margin-top:8px;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
+
+/* board bottom */
+.board-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 0 4px;border-top:2px solid rgba(165,180,252,.15);flex-wrap:wrap;gap:10px}
+.bstat{text-align:center;min-width:80px}
+.bstat-val{font-size:22px;font-weight:900;color:#FCD34D}
+.bstat-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:999}
+
+/* ── RESPONSIVE ──────────────────── */
+@media(max-width:600px){
+  .login-cards,.fun-grid-2,.fun-grid-3{grid-template-columns:1fr}
+  .board-grid{grid-template-columns:repeat(2,1fr)}
+  .bvolts{font-size:42px}
+  .group-actions{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <span class="logo-bolt">⚡</span>
+    <div>Volt Economy<span class="logo-sub">STEAM Supply Store</span></div>
+  </div>
+  <div class="nav-right">
+    <span class="who-pill hidden" id="nav-who"></span>
+    <button class="nav-pill hidden" id="nav-board" onclick="gotoPage('board')">📺 Board</button>
+    <button class="nav-pill hidden" id="nav-home" onclick="gotoPage('home')">🏠 Dashboard</button>
+    <button class="nav-pill hidden" id="nav-logout" onclick="logout()">👋 Log out</button>  </div>
+</nav>
+
+<!-- ══ LOGIN ══════════════════════════════ -->
+<div id="pg-login">
+  <div class="login-hero">
+    <span class="login-hero-icon">⚡</span>
+    <h1>Volt <span>Economy</span></h1>
+    <p>Your classroom supply store &amp; currency system</p>
+    <div class="login-cards">
+      <div class="login-card" onclick="showForm('teacher')">
+        <span class="lc-icon">🎓</span>
+        <h2>Teacher</h2>
+        <p>Manage groups, Volts, store items &amp; earning opportunities</p>
+      </div>
+      <div class="login-card" onclick="showForm('student')">
+        <span class="lc-icon">🔋</span>
+        <h2>Student Group</h2>
+        <p>Check your balance, history &amp; browse the supply store</p>
+      </div>
+    </div>
+    <button class="board-btn" onclick="gotoPage('board')">📺 Open Board View</button>
+  </div>
+</div>
+
+<!-- ══ TEACHER FORM ════════════════════════ -->
+<div id="pg-teacher-form" class="form-wrap hidden">
+  <div class="form-box">
+    <h2>🎓 Teacher Login</h2>
+    <label class="field-label">Password</label>
+    <input class="field-input" type="password" id="tpw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doTeacherLogin()">
+    <div id="tpw-err" class="alert alert-bad hidden" style="margin-top:10px"></div>
+    <button class="btn btn-purple btn-block" onclick="doTeacherLogin()">🚀 Enter Dashboard</button>
+    <br><span class="back-link" onclick="showForm('none')">← Back</span>
+  </div>
+</div>
+
+<!-- ══ STUDENT FORM ════════════════════════ -->
+<div id="pg-student-form" class="form-wrap hidden">
+  <div class="form-box">
+    <h2>🔋 Group Login</h2>
+    <label class="field-label">Your Group</label>
+    <select class="field-input" id="s-grp-sel" style="appearance:auto"></select>
+    <label class="field-label">Group PIN</label>
+    <input class="field-input" type="password" id="spin" placeholder="4-digit PIN" maxlength="4" onkeydown="if(event.key==='Enter')doStudentLogin()">
+    <div id="spin-err" class="alert alert-bad hidden" style="margin-top:10px"></div>
+    <button class="btn btn-gold btn-block" onclick="doStudentLogin()">⚡ View My Account</button>
+    <br><span class="back-link" onclick="showForm('none')">← Back</span>
+  </div>
+</div>
+
+<!-- ══ TEACHER DASHBOARD ══════════════════ -->
+<div id="pg-teacher" class="page hidden">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="tTab('groups')">👥 Groups</button>
+    <button class="tab-btn" onclick="tTab('store')">🛒 Store Items</button>
+    <button class="tab-btn" onclick="tTab('earn')">⚡ Earning Opps</button>
+    <button class="tab-btn" onclick="tTab('setup')">⚙️ Setup</button>
+  </div>
+
+  <div id="tt-groups">
+    <div class="sec-hdr">
+      <h2>👥 Group Accounts</h2>
+      <button class="btn btn-purple btn-sm" onclick="gotoPage('board')">📺 Board View</button>
+    </div>
+    <div id="t-alert"></div>
+    <div class="card" style="padding:0"><div id="t-groups-list"></div></div>
+  </div>
+
+  <div id="tt-store" class="hidden">
+    <div class="sec-hdr">
+      <h2>🛒 Supply Store Items</h2>
+      <button class="btn btn-green btn-sm" onclick="openItemModal(null)">➕ Add Item</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px">Add, edit or remove items. Students instantly see changes in their store view.</p>
+    <div id="t-store-list"></div>
+  </div>
+
+  <div id="tt-earn" class="hidden">
+    <div class="sec-hdr">
+      <h2>⚡ Earning Opportunities</h2>
+      <button class="btn btn-green btn-sm" onclick="openEarnModal(null)">➕ Add Opportunity</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px">Edit opportunities — they also scroll on the board ticker.</p>
+    <div id="t-earn-list"></div>
+  </div>
+
+  <div id="tt-setup" class="hidden">
+    <div class="sec-hdr"><h2>⚙️ Setup</h2></div>
+    <div class="fun-grid fun-grid-2" style="gap:16px">
+      <div class="card">
+        <div class="card-title">➕ Add New Group</div>
+        <label class="field-label">Group Name</label>
+        <input class="field-input" id="ng-name" placeholder="e.g. Team Ohm">
+        <label class="field-label">Problem Card</label>
+        <select class="field-input" id="ng-card" style="appearance:auto">
+          <option value="A">Card A – Night-Light 💡</option>
+          <option value="B">Card B – Alarm/Buzzer 🚨</option>
+          <option value="C">Card C – Wearable LED 👕</option>
+        </select>
+        <label class="field-label">4-Digit PIN</label>
+        <input class="field-input" id="ng-pin" placeholder="e.g. 1234" maxlength="4">
+        <button class="btn btn-purple btn-block" onclick="addGroup()">✅ Add Group</button>
+        <div id="ng-alert" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🔑 Teacher Password</div>
+        <label class="field-label">New Password</label>
+        <input class="field-input" type="password" id="npw1" placeholder="New password">
+        <label class="field-label">Confirm</label>
+        <input class="field-input" type="password" id="npw2" placeholder="Confirm password">
+        <button class="btn btn-purple btn-block" onclick="changePw()">🔒 Update Password</button>
+        <div id="pw-alert" style="margin-top:10px"></div>
+      </div>
+      <div class="card" style="grid-column:1/-1">
+        <div class="card-title">📋 Manage Groups</div>
+        <div id="manage-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STUDENT DASHBOARD ═══════════════════ -->
+<div id="pg-student" class="page hidden">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="sTab('account')">⚡ My Account</button>
+    <button class="tab-btn" onclick="sTab('store')">🛒 Supply Store</button>
+    <button class="tab-btn" onclick="sTab('earn')">💰 How to Earn</button>
+  </div>
+
+  <div id="st-account">
+    <div class="fun-grid fun-grid-3" style="gap:14px;margin-bottom:16px">
+      <div class="stat-chip chip-gold">
+        <div class="sc-val" id="s-bal">—</div>
+        <div class="sc-lbl">⚡ My Volts</div>
+      </div>
+      <div class="stat-chip chip-green">
+        <div class="sc-val" id="s-earned">—</div>
+        <div class="sc-lbl">🎉 Total Earned</div>
+      </div>
+      <div class="stat-chip chip-red">
+        <div class="sc-val" id="s-spent">—</div>
+        <div class="sc-lbl">🛒 Total Spent</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="card-title" style="margin:0">🃏 My Problem Card</div>
+        <div id="s-card-badge"></div>
+      </div>
+      <div id="s-card-desc" style="font-size:13px;color:var(--muted);font-weight:600"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📜 Transaction History</div>
+      <div id="s-ledger"></div>
+    </div>
+  </div>
+
+  <div id="st-store" class="hidden">
+    <div class="sec-hdr">
+      <h2>🛒 Supply Store</h2>
+      <div class="price-tag" style="font-size:16px" id="s-store-bal">⚡ —V</div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:16px">🟢 Green border = you can afford it! Bring your Volt Ledger to the teacher to buy.</p>
+    <div id="s-store-display"></div>
+  </div>
+
+  <div id="st-earn" class="hidden">
+    <div class="sec-hdr"><h2>💰 Ways to Earn Volts Today!</h2></div>
+    <div id="s-earn-display"></div>
+  </div>
+</div>
+
+<!-- ══ BOARD VIEW ══════════════════════════ -->
+<div id="pg-board" class="hidden">
+  <canvas id="board-stars"></canvas>
+  <div class="page">
+    <div class="board-top">
+      <div class="board-logo">⚡ <span>Volt</span> Economy</div>
+      <div class="board-tagline">STEAM · Circuits &amp; Switches · Live Scoreboard</div>
+    </div>
+    <div class="ticker-wrap"><div class="ticker-inner" id="ticker"></div></div>
+    <div class="board-grid" id="board-grid"></div>
+    <div class="board-footer">
+      <div class="bstat"><div class="bstat-val" id="bf-groups">—</div><div class="bstat-lbl">Groups</div></div>
+      <div class="bstat"><div class="bstat-val" id="bf-leader">—</div><div class="bstat-lbl">Leader</div></div>
+      <div class="bstat"><div class="bstat-val" id="bf-avg">—</div><div class="bstat-lbl">Class Avg</div></div>
+      <div class="bstat"><div class="bstat-val" id="bf-top">—</div><div class="bstat-lbl">Top Balance</div></div>
+      <div>
+        <button class="nav-pill" onclick="loadState().then(renderBoard)" style="font-size:12px">↺ Refresh</button>
+        <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:4px;font-weight:700" id="bf-time"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══════════════════════════════ -->
+<div id="modal-tx" class="hidden">
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title" id="tx-title">Transaction</div>
+      <label class="field-label">Amount (⚡V)</label>
+      <input class="field-input" type="number" id="tx-amt" min="1" max="999" placeholder="e.g. 15">
+      <label class="field-label">Reason / Description</label>
+      <input class="field-input" type="text" id="tx-reason" placeholder="e.g. Quick Write Day 2">
+      <label class="field-label">Type</label>
+      <select class="field-input" id="tx-type" style="appearance:auto">
+        <option value="earn">⬆️ Earn — Add Volts</option>
+        <option value="spend">⬇️ Spend — Store Purchase</option>
+        <option value="fine">⚠️ Fine — Deduct Volts</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeModals()">Cancel</button>
+        <button class="btn btn-gold btn-sm" onclick="submitTx()">✅ Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-item" class="hidden">
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title" id="item-title">🛒 Add Store Item</div>
+      <input type="hidden" id="item-id">
+      <label class="field-label">Item Name</label>
+      <input class="field-input" id="item-name" placeholder="e.g. Piezo buzzer">
+      <label class="field-label">Price (⚡V)</label>
+      <input class="field-input" type="number" id="item-price" min="1" max="999" placeholder="e.g. 70">
+      <label class="field-label">Tier</label>
+      <select class="field-input" id="item-tier" style="appearance:auto">
+        <option value="0">🟢 Tier 0 — Starter Kit</option>
+        <option value="1">🔵 Tier 1 — Basic Upgrades</option>
+        <option value="2">🟡 Tier 2 — Functional Upgrades</option>
+        <option value="3">🟠 Tier 3 — Premium Upgrades</option>
+        <option value="4">🔴 Tier 4 — Luxury / Special</option>
+      </select>
+      <label class="field-label">Short Description</label>
+      <input class="field-input" id="item-note" placeholder="e.g. Auditory output for Alarm card">
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeModals()">Cancel</button>
+        <button class="btn btn-green btn-sm" onclick="saveItem()">💾 Save Item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-earn" class="hidden">
+  <div class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title" id="earn-title">⚡ Add Earning Opportunity</div>
+      <input type="hidden" id="earn-id">
+      <label class="field-label">Icon (emoji)</label>
+      <input class="field-input" id="earn-icon" placeholder="e.g. ⚡" maxlength="2">
+      <label class="field-label">Activity Name</label>
+      <input class="field-input" id="earn-activity" placeholder="e.g. Daily Quick Write">
+      <label class="field-label">Amount Earned</label>
+      <input class="field-input" id="earn-amount" placeholder="e.g. +8V">
+      <label class="field-label">Partial Credit (optional)</label>
+      <input class="field-input" id="earn-partial" placeholder="e.g. +4V partial">
+      <label class="field-label">When Paid Out</label>
+      <input class="field-input" id="earn-when" placeholder="e.g. End of class">
+      <label class="field-label">Teacher Note</label>
+      <textarea class="field-input" id="earn-note" style="height:70px;resize:vertical" placeholder="Implementation tip..."></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeModals()">Cancel</button>
+        <button class="btn btn-teal btn-sm" onclick="saveEarnOpp()">💾 Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════ DEFAULT DATA ══════════════════ */
+const DSTORE=[
+  {id:'led2',name:'Standard red LED (×2)',price:20,tier:0,note:'1 for build, 1 spare'},
+  {id:'aa',name:'AA battery + holder',price:25,tier:0,note:'Powers the basic circuit'},
+  {id:'wire12',name:'Copper wire, 12 in.',price:15,tier:0,note:'Main conductor'},
+  {id:'cardboard',name:'Cardboard sheet (8×10)',price:10,tier:0,note:'Enclosure / base'},
+  {id:'tape',name:'Masking tape',price:5,tier:0,note:'Insulating & securing'},
+  {id:'paperclip',name:'Paperclip switch',price:5,tier:0,note:'Manual open/close'},
+  {id:'foil',name:'Aluminum foil strip',price:5,tier:0,note:'Contact point material'},
+  {id:'rubber',name:'Rubber bands (×3)',price:5,tier:0,note:'Fastening'},
+  {id:'wire12b',name:'Extra wire, 12 in.',price:10,tier:1,note:'More routing options'},
+  {id:'clips',name:'Alligator clip leads (×2)',price:15,tier:1,note:'More reliable connections'},
+  {id:'aa2',name:'Second AA battery',price:20,tier:1,note:'More power / brighter LED'},
+  {id:'sticks',name:'Popsicle sticks (×6)',price:10,tier:1,note:'Structural framing'},
+  {id:'brad',name:'Brad / fastener (×2)',price:8,tier:1,note:'Pivot for lever switch'},
+  {id:'cup',name:'Plastic cup',price:10,tier:1,note:'Diffuser or shade'},
+  {id:'index',name:'Index cards (×3)',price:8,tier:1,note:'Labels & panels'},
+  {id:'colorled',name:'Colored LED (blue/green/white)',price:35,tier:2,note:'Different forward voltage'},
+  {id:'9v',name:'9V battery + snap connector',price:45,tier:2,note:'Higher voltage — needs resistor'},
+  {id:'cutape',name:'Copper tape, 6 in.',price:40,tier:2,note:'Pro-grade conductor'},
+  {id:'toggle',name:'Toggle switch (pre-made)',price:50,tier:2,note:'Replaces paperclip'},
+  {id:'resistors',name:'Resistor pack (×4)',price:30,tier:2,note:'Required with 9V battery'},
+  {id:'foam',name:'Foam core board (4×6)',price:35,tier:2,note:'Sturdier enclosure'},
+  {id:'breadboard',name:'Mini breadboard',price:60,tier:2,note:'Easy reconfiguration'},
+  {id:'multiled',name:'Multi-LED set (×4 mixed)',price:75,tier:3,note:'Series/parallel challenge'},
+  {id:'buzzer',name:'Piezo buzzer',price:70,tier:3,note:'Alarm card — auditory output'},
+  {id:'thread',name:'Conductive thread, 12 in.',price:90,tier:3,note:'Wearable wiring'},
+  {id:'velcro',name:'Velcro strip, 2 in.',price:25,tier:3,note:'Wearable attachment'},
+  {id:'battpack',name:'Small battery pack (3×AAA)',price:80,tier:3,note:'Compact wearable power'},
+  {id:'slide',name:'Slide switch (SPDT)',price:80,tier:3,note:'3-terminal switch'},
+  {id:'3dps',name:'3D Printed Part — Simple',price:150,tier:4,note:'Submit design file 2 days before. Teacher approval required.'},
+  {id:'3dpc',name:'3D Printed Part — Complex',price:250,tier:4,note:'Submit 3 days before. Design rationale in notebook required.'},
+  {id:'cardtrade',name:'Problem Card Trade',price:25,tier:4,note:'Random redraw. Max 2 per group.'},
+  {id:'hint',name:'Hint Token',price:20,tier:4,note:'Teacher gives ONE Socratic question.'},
+];
+const DEARN=[
+  {id:'qw',icon:'⚡',activity:'Daily Quick Write (5 min)',amount:'+10V',partial:'',when:'End of class',note:'Pay at END, never at start. Check for real effort.'},
+  {id:'quiz',icon:'📝',activity:'Quiz Score',amount:'+1V per 10% scored',partial:'100% = +10V',when:'Day quiz returned',note:'Simple: score divided by 10, rounded. Kids can calculate this themselves.'},
+  {id:'hw',icon:'🏠',activity:'Homework (on time)',amount:'+10V',partial:'+5V if late',when:'Start of next class',note:'Late = half. Missing = 0. No penalty, just reduced reward.'},
+  {id:'nb',icon:'📓',activity:'Notebook spot check',amount:'+10V',partial:'',when:'On spot check',note:'Announce which page — not when. Surprise timing keeps notebooks current.'},
+  {id:'peer',icon:'🎓',activity:'Teach a peer something',amount:'+15V',partial:'Once per project',when:'When teacher observes',note:'Peer must be able to repeat it back. One per student.'},
+  {id:'iter',icon:'🔬',activity:'Extra Test Cycle (Round 3)',amount:'+20V',partial:'',when:'Notebook review',note:'Must be data-driven — write the change reason BEFORE building.'},
+  {id:'submit',icon:'✅',activity:'Turn everything in on time',amount:'+10V',partial:'',when:'End of Day 3',note:'All deliverables complete by close of Day 3.'},
+  {id:'clean',icon:'🧹',activity:'Clean Lab Award',amount:'+25V BONUS',partial:'',when:'End of Day 3',note:'Zero cleanup fines across all 3 days — announce this on Day 1!'},
+];
+const CARDS={
+  A:{name:'💡 Card A – Night-Light',color:'#4C1D95',bg:'#EDE9FE',desc:'Design a switch-operated LED night-light for the community center.'},
+  B:{name:'🚨 Card B – Alarm/Buzzer',color:'#7F1D1D',bg:'#FEE2E2',desc:'Design a circuit alarm for the library return box.'},
+  C:{name:'👕 Card C – Wearable LED',color:'#1E3A8A',bg:'#DBEAFE',desc:'Design wearable LED badges for the drama club sci-fi play.'},
+};
+const GROUP_ICONS=['⚡','🔋','💡','🔬','🧲','🌊','🚀','🎯','🎨','🦾'];
+const GROUP_COLORS=[
+  {bg:'#EDE9FE',border:'#7C3AED',icon:'#4C1D95'},
+  {bg:'#DCFCE7',border:'#16A34A',icon:'#14532D'},
+  {bg:'#DBEAFE',border:'#2563EB',icon:'#1E3A8A'},
+  {bg:'#FEF3C7',border:'#D97706',icon:'#78350F'},
+  {bg:'#FCE7F3',border:'#DB2777',icon:'#831843'},
+  {bg:'#CCFBF1',border:'#0D9488',icon:'#134E4A'},
+  {bg:'#FFEDD5',border:'#EA580C',icon:'#7C2D12'},
+  {bg:'#F1EFE8',border:'#6B7280',icon:'#1F2937'},
+];
+
+/* ═══════════════ STATE ═════════════════════════ */
+let S={pw:'steam2024',groups:[],store:[],earn:[],user:null};
+let pendingGid=null,prevBals={};
+
+/* ═══════════════ STORAGE ═══════════════════════ */
+async function save(){try{await window.storage.set('volt3',JSON.stringify({pw:S.pw,groups:S.groups,store:S.store,earn:S.earn}),false);}catch(e){}}
+async function loadState(){
+  try{const r=await window.storage.get('volt3',false);if(r&&r.value){const d=JSON.parse(r.value);S.pw=d.pw||'steam2024';S.groups=d.groups||[];S.store=d.store||[];S.earn=d.earn||[];}}catch(e){}
+  if(!S.store.length)S.store=[...DSTORE];
+  if(!S.earn.length)S.earn=[...DEARN];
+  if(!S.groups.length){
+    S.groups=[
+      {id:'g1',name:'Team Ohm',pin:'1111',card:'A',balance:150,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150}]},
+      {id:'g2',name:'Team Faraday',pin:'2222',card:'B',balance:158,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150},{d:'Day 1',type:'earn',amt:8,reason:'Quick Write',bal:158}]},
+      {id:'g3',name:'Team Tesla',pin:'3333',card:'C',balance:135,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150},{d:'Day 1',type:'spend',amt:15,reason:'Extra wire',bal:135}]},
+    ];
+    await save();
+  }
+}
+
+/* ═══════════════ HELPERS ═══════════════════════ */
+const $=id=>document.getElementById(id);
+const G=id=>S.groups.find(g=>g.id===id);
+const fmt=n=>Math.round(n);
+const uid=()=>'i'+Date.now()+Math.random().toString(36).slice(2,5);
+const TNAME=['Starter','Tier 1','Tier 2','Tier 3','Tier 4'];
+const TCLS=['tp0','tp1','tp2','tp3','tp4'];
+const TSEC_COLORS=[
+  {bg:'#DCFCE7',color:'#14532D',label:'🟢 Starter Kit — Included in 150V Balance'},
+  {bg:'#DBEAFE',color:'#1E3A8A',label:'🔵 Tier 1 — Basic Upgrades'},
+  {bg:'#FEF3C7',color:'#78350F',label:'🟡 Tier 2 — Functional Upgrades'},
+  {bg:'#FFEDD5',color:'#7C2D12',label:'🟠 Tier 3 — Premium Upgrades'},
+  {bg:'#FEE2E2',color:'#7F1D1D',label:'🔴 Tier 4 — Luxury & Special'},
+];
+function gColor(idx){return GROUP_COLORS[idx%GROUP_COLORS.length]}
+function gIcon(idx){return GROUP_ICONS[idx%GROUP_ICONS.length]}
+function showAlert(id,msg,type='ok'){const e=$(id);if(!e)return;e.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;setTimeout(()=>{e.innerHTML=''},3500);}
+function closeModals(){['modal-tx','modal-item','modal-earn'].forEach(id=>$(id).classList.add('hidden'));}
+
+/* ═══════════════ NAVIGATION ════════════════════ */
+function gotoPage(pg){
+  ['pg-login','pg-teacher-form','pg-student-form','pg-teacher','pg-student','pg-board','modal-tx','modal-item','modal-earn']
+    .forEach(id=>$(id).classList.add('hidden'));
+  ['nav-board','nav-home','nav-logout','nav-who'].forEach(id=>$(id).classList.add('hidden'));
+
+  if(pg==='board'){
+    $('pg-board').classList.remove('hidden');
+    renderBoard();drawStars();
+    if(S.user){
+      $('nav-who').classList.remove('hidden');
+      $('nav-home').classList.remove('hidden');
+      $('nav-logout').classList.remove('hidden');
+    } else {
+      $('nav-home').classList.remove('hidden');
+    }
+    return;
+  }
+  if(pg==='home'){
+    if(!S.user){showForm('none');return;}    if(S.user.role==='teacher'){
+      $('pg-teacher').classList.remove('hidden');
+      $('nav-who').textContent='🎓 Teacher';$('nav-who').classList.remove('hidden');
+      $('nav-board').classList.remove('hidden');$('nav-logout').classList.remove('hidden');
+      renderTGroups();renderTStore();renderTEarn();renderManage();
+      tTab('groups');
+    } else {
+      $('pg-student').classList.remove('hidden');
+      const g=G(S.user.gid);
+      $('nav-who').textContent=(g?gIcon(S.groups.indexOf(g))+' '+g.name:'');
+      $('nav-who').classList.remove('hidden');
+      $('nav-board').classList.remove('hidden');$('nav-logout').classList.remove('hidden');
+      renderSAccount();
+    }
+    return;
+  }
+  showForm('none');
+}
+function showForm(which){
+  ['pg-teacher-form','pg-student-form','pg-login'].forEach(id=>$(id).classList.add('hidden'));
+  if(which==='none'){$('pg-login').classList.remove('hidden');return;}
+  $('pg-'+which+'-form').classList.remove('hidden');
+  if(which==='student'){$('s-grp-sel').innerHTML=S.groups.map(g=>`<option value="${g.id}">${gIcon(S.groups.indexOf(g))} ${g.name}</option>`).join('');}
+}
+function logout(){S.user=null;showForm('none');}
+
+/* ═══════════════ AUTH ══════════════════════════ */
+function doTeacherLogin(){
+  const pw=$('tpw').value;const err=$('tpw-err');
+  if(pw===S.pw){err.classList.add('hidden');S.user={role:'teacher'};gotoPage('home');}
+  else{err.textContent='❌ Incorrect password. Try again.';err.classList.remove('hidden');}
+}
+function doStudentLogin(){
+  const gid=$('s-grp-sel').value,pin=$('spin').value,err=$('spin-err');
+  const g=G(gid);
+  if(g&&pin===g.pin){err.classList.add('hidden');S.user={role:'student',gid};gotoPage('home');}
+  else{err.textContent='❌ Wrong PIN. Ask your teacher!';err.classList.remove('hidden');}
+}
+
+/* ═══════════════ TABS ══════════════════════════ */
+function tTab(tab){
+  ['groups','store','earn','setup'].forEach(t=>$('tt-'+t).classList.toggle('hidden',t!==tab));
+  document.querySelectorAll('#pg-teacher .tab-btn').forEach((el,i)=>el.classList.toggle('active',['groups','store','earn','setup'][i]===tab));
+  if(tab==='setup')renderManage();
+}
+function sTab(tab){
+  ['account','store','earn'].forEach(t=>$('st-'+t).classList.toggle('hidden',t!==tab));
+  document.querySelectorAll('#pg-student .tab-btn').forEach((el,i)=>el.classList.toggle('active',['account','store','earn'][i]===tab));
+  if(tab==='store'){const g=G(S.user?.gid);$('s-store-bal').textContent=`⚡ ${fmt(g?.balance||0)}V`;renderStore('s-store-display',g?.balance??null);}
+  if(tab==='earn')renderEarn('s-earn-display');
+}
+
+/* ═══════════════ TEACHER — GROUPS ══════════════ */
+function renderTGroups(){
+  const el=$('t-groups-list');
+  if(!S.groups.length){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">No groups yet — go to Setup tab to add groups! 🚀</div>';return;}
+  el.innerHTML=S.groups.map((g,idx)=>{
+    const c=gColor(idx),icon=gIcon(idx),bal=fmt(g.balance);
+    const bc=bal<0?'var(--red)':bal>200?'var(--green)':'var(--gold-dk)';
+    return `<div class="group-row">
+      <div class="group-avatar" style="background:${c.bg};border-color:${c.border};color:${c.icon}">${icon}</div>
+      <div class="group-info">
+        <div class="group-name">${g.name}</div>
+        <div class="group-card-lbl">${CARDS[g.card]?.name||g.card}</div>
+      </div>
+      <div class="group-bal" style="color:${bc}">⚡${bal}V</div>
+      <div class="group-actions">
+        <button class="btn btn-gold btn-sm" onclick="openTx('${g.id}','earn')">➕ Earn</button>
+        <button class="btn btn-teal btn-sm" onclick="openTx('${g.id}','spend')">🛒 Spend</button>
+        <button class="btn btn-red btn-sm" onclick="openTx('${g.id}','fine')">⚠️ Fine</button>
+        <button class="btn btn-ghost btn-sm" onclick="viewLedger('${g.id}')">📜 Ledger</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openTx(gid,type){
+  pendingGid=gid;const g=G(gid);
+  $('tx-title').textContent=(type==='earn'?'➕ Add Volts':type==='fine'?'⚠️ Issue Fine':'🛒 Record Purchase')+' — '+g.name;
+  $('tx-amt').value='';$('tx-reason').value='';$('tx-type').value=type;
+  $('modal-tx').classList.remove('hidden');
+  setTimeout(()=>$('tx-amt').focus(),60);
+}
+async function submitTx(){
+  const g=G(pendingGid);if(!g)return;
+  const amt=parseInt($('tx-amt').value),reason=$('tx-reason').value.trim(),type=$('tx-type').value;
+  if(!amt||amt<=0){alert('Enter a valid amount!');return;}
+  if(!reason){alert('Enter a reason!');return;}
+  const ch=type==='earn'?amt:-amt;
+  g.balance=Math.max(-30,g.balance+ch);
+  g.transactions=g.transactions||[];
+  g.transactions.push({d:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),type,amt,reason,bal:fmt(g.balance)});
+  await save();closeModals();pendingGid=null;
+  showAlert('t-alert',`✅ ${type==='earn'?'+':'−'}${amt}V applied to ${g.name}. New balance: ⚡${fmt(g.balance)}V`,'ok');
+  renderTGroups();
+  if(type==='earn'&&amt>=20)confetti();
+  if(type==='earn'&&g.balance>=200&&(g.balance-amt)<200)showAlert('t-alert',`🎉 ${g.name} just hit 200V! They can afford Tier 2 upgrades!`,'ok');
+}
+function viewLedger(gid){
+  const g=G(gid);if(!g)return;
+  const idx=S.groups.indexOf(g),c=gColor(idx),icon=gIcon(idx);
+  const txs=(g.transactions||[]).slice().reverse();
+  const w=window.open('','_blank','width=640,height=540');
+  w.document.write(`<html><head><title>${g.name} Ledger</title><style>@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap');body{font-family:'Nunito',sans-serif;background:#F1F0FF;padding:24px;color:#1F2937}.header{background:${c.bg};border:3px solid ${c.border};border-radius:20px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px}.icon{font-size:40px}.name{font-size:22px;font-weight:900;color:${c.icon}}.bal{font-size:14px;font-weight:700;color:#6B7280}table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 3px 0 #E5E7EB}th{background:#7C3AED;color:#fff;padding:10px 14px;text-align:left;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.5px}td{padding:10px 14px;border-bottom:2px solid #F3F4F6;font-weight:600;font-size:13px}.earn{color:#14532D;font-weight:900}.spend{color:#7F1D1D;font-weight:900}.fine{color:#7C2D12;font-weight:900}tr:last-child td{border-bottom:none}</style></head><body><div class="header"><div class="icon">${icon}</div><div><div class="name">${g.name}</div><div class="bal">Balance: ⚡${fmt(g.balance)}V &nbsp;|&nbsp; ${CARDS[g.card]?.name||g.card}</div></div></div><table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th><th>Balance</th></tr></thead><tbody>${txs.map(t=>`<tr><td>${t.d}</td><td>${t.type}</td><td class="${t.type}">${t.type==='earn'?'+':'−'}${t.amt}V</td><td>${t.reason}</td><td>⚡${t.bal}V</td></tr>`).join('')}</tbody></table></body></html>`);
+  w.document.close();
+}
+
+/* ═══════════════ TEACHER — STORE EDITOR ════════ */
+function renderTStore(){
+  const el=$('t-store-list');if(!el)return;
+  let html='';
+  [0,1,2,3,4].forEach(t=>{
+    const items=S.store.filter(i=>i.tier===t);if(!items.length)return;
+    const sc=TSEC_COLORS[t];
+    html+=`<div style="margin-bottom:18px">
+      <div class="tier-section-label" style="background:${sc.bg};color:${sc.color}">${sc.label}</div>
+      <div class="card" style="padding:0">`;
+    items.forEach(item=>{html+=`<div class="edit-row">
+      <span class="tier-pill ${TCLS[t]}">${TNAME[t]}</span>
+      <span class="edit-name">${item.name}</span>
+      <span class="edit-note">${item.note}</span>
+      <span class="price-tag">⚡${item.price}V</span>
+      <button class="btn btn-ghost btn-sm" onclick="openItemModal('${item.id}')">✏️ Edit</button>
+      <button class="btn btn-red btn-sm" onclick="delItem('${item.id}')">🗑️</button>
+    </div>`;});
+    html+='</div></div>';
+  });
+  el.innerHTML=html||'<p style="color:var(--muted);font-weight:700;padding:16px">No items yet. Add some above!</p>';
+}
+function openItemModal(itemId){
+  const isNew=!itemId;
+  $('item-title').textContent=isNew?'🛒 Add Store Item':'✏️ Edit Store Item';
+  if(isNew){['item-id','item-name','item-price','item-note'].forEach(id=>$(id).value='');$('item-tier').value='1';}
+  else{const it=S.store.find(i=>i.id===itemId);if(!it)return;$('item-id').value=it.id;$('item-name').value=it.name;$('item-price').value=it.price;$('item-tier').value=it.tier;$('item-note').value=it.note;}
+  $('modal-item').classList.remove('hidden');
+}
+async function saveItem(){
+  const id=$('item-id').value,name=$('item-name').value.trim(),price=parseInt($('item-price').value),tier=parseInt($('item-tier').value),note=$('item-note').value.trim();
+  if(!name||!price){alert('Name and price are required!');return;}
+  if(id){const i=S.store.findIndex(x=>x.id===id);if(i>=0)S.store[i]={id,name,price,tier,note};}
+  else S.store.push({id:uid(),name,price,tier,note});
+  await save();closeModals();renderTStore();showAlert('t-alert','✅ Store item saved!','ok');
+}
+async function delItem(id){if(!confirm('Remove this item from the store?'))return;S.store=S.store.filter(i=>i.id!==id);await save();renderTStore();showAlert('t-alert','🗑️ Item removed.','info');}
+
+/* ═══════════════ TEACHER — EARN EDITOR ═════════ */
+function renderTEarn(){
+  const el=$('t-earn-list');if(!el)return;
+  if(!S.earn.length){el.innerHTML='<p style="color:var(--muted);font-weight:700;padding:16px">No opportunities yet. Add some!</p>';return;}
+  el.innerHTML='<div class="card" style="padding:0">'+S.earn.map(e=>`<div class="edit-row">
+    <span class="edit-icon">${e.icon}</span>
+    <span class="edit-name">${e.activity}</span>
+    <span class="earn-badge">${e.amount}</span>
+    <span class="edit-note" style="min-width:90px;text-align:right">${e.when}</span>
+    <button class="btn btn-ghost btn-sm" onclick="openEarnModal('${e.id}')">✏️ Edit</button>
+    <button class="btn btn-red btn-sm" onclick="delEarn('${e.id}')">🗑️</button>
+  </div>`).join('')+'</div>';
+}
+function openEarnModal(eid){
+  const isNew=!eid;
+  $('earn-title').textContent=isNew?'⚡ Add Earning Opportunity':'✏️ Edit Earning Opportunity';
+  if(isNew){['earn-id','earn-icon','earn-activity','earn-amount','earn-partial','earn-when','earn-note'].forEach(id=>$(id).value='');}
+  else{const e=S.earn.find(x=>x.id===eid);if(!e)return;$('earn-id').value=e.id;$('earn-icon').value=e.icon;$('earn-activity').value=e.activity;$('earn-amount').value=e.amount;$('earn-partial').value=e.partial||'';$('earn-when').value=e.when;$('earn-note').value=e.note;}
+  $('modal-earn').classList.remove('hidden');
+}
+async function saveEarnOpp(){
+  const id=$('earn-id').value,icon=$('earn-icon').value.trim()||'⚡',activity=$('earn-activity').value.trim(),amount=$('earn-amount').value.trim(),partial=$('earn-partial').value.trim(),when=$('earn-when').value.trim(),note=$('earn-note').value.trim();
+  if(!activity||!amount){alert('Activity and amount are required!');return;}
+  if(id){const i=S.earn.findIndex(x=>x.id===id);if(i>=0)S.earn[i]={id,icon,activity,amount,partial,when,note};}
+  else S.earn.push({id:uid(),icon,activity,amount,partial,when,note});
+  await save();closeModals();renderTEarn();showAlert('t-alert','✅ Earning opportunity saved!','ok');
+}
+async function delEarn(id){if(!confirm('Remove this opportunity?'))return;S.earn=S.earn.filter(e=>e.id!==id);await save();renderTEarn();}
+
+/* ═══════════════ TEACHER — SETUP ═══════════════ */
+async function addGroup(){
+  const name=$('ng-name').value.trim(),card=$('ng-card').value,pin=$('ng-pin').value.trim();
+  if(!name||pin.length<4){showAlert('ng-alert','⚠️ Name and 4-digit PIN required!','bad');return;}
+  if(S.groups.find(g=>g.name.toLowerCase()===name.toLowerCase())){showAlert('ng-alert','⚠️ Group name already exists!','bad');return;}
+  S.groups.push({id:'g'+Date.now(),name,pin,card,balance:150,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150}]});
+  await save();showAlert('ng-alert',`✅ ${name} added with ⚡150V!`,'ok');
+  $('ng-name').value='';$('ng-pin').value='';renderManage();renderTGroups();
+}
+async function removeGroup(id){if(!confirm('Remove this group? This cannot be undone.'))return;S.groups=S.groups.filter(g=>g.id!==id);await save();renderManage();renderTGroups();}
+function renderManage(){
+  const el=$('manage-list');if(!el)return;
+  if(!S.groups.length){el.innerHTML='<p style="color:var(--muted);font-weight:700">No groups yet.</p>';return;}
+  el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px;font-family:inherit">
+    <thead><tr style="background:var(--purple-lt)">
+      <th style="padding:9px 12px;text-align:left;font-weight:900;color:var(--purple-dk)">Group</th>
+      <th style="padding:9px 12px;font-weight:900;color:var(--purple-dk)">Card</th>
+      <th style="padding:9px 12px;font-weight:900;color:var(--purple-dk)">PIN</th>
+      <th style="padding:9px 12px;font-weight:900;color:var(--purple-dk)">Balance</th>
+      <th style="padding:9px 12px"></th>
+    </tr></thead>
+    <tbody>${S.groups.map((g,i)=>`<tr><td style="padding:9px 12px;font-weight:800">${gIcon(i)} ${g.name}</td><td style="padding:9px 12px;color:var(--muted);font-weight:600">${CARDS[g.card]?.name||g.card}</td><td style="padding:9px 12px;font-family:monospace;font-weight:700">${g.pin}</td><td style="padding:9px 12px;font-weight:900;color:var(--gold-dk)">⚡${fmt(g.balance)}V</td><td style="padding:9px 12px"><button class="btn btn-red btn-sm" onclick="removeGroup('${g.id}')">🗑️ Remove</button></td></tr>`).join('')}</tbody>
+  </table>`;
+}
+async function changePw(){const n=$('npw1').value,c=$('npw2').value;if(!n||n.length<4){showAlert('pw-alert','⚠️ Min 4 characters.','bad');return;}if(n!==c){showAlert('pw-alert','⚠️ Passwords don\'t match!','bad');return;}S.pw=n;await save();showAlert('pw-alert','✅ Password updated!','ok');$('npw1').value='';$('npw2').value='';}
+
+/* ═══════════════ STUDENT ACCOUNT ═══════════════ */
+function renderSAccount(){
+  const g=G(S.user?.gid);if(!g)return;
+  $('s-bal').textContent=fmt(g.balance);
+  const txs=g.transactions||[];
+  $('s-earned').textContent=fmt(txs.filter(t=>t.type==='earn').reduce((a,t)=>a+t.amt,0));
+  $('s-spent').textContent=fmt(txs.filter(t=>t.type!=='earn').reduce((a,t)=>a+t.amt,0));
+  const card=CARDS[g.card]||{};
+  $('s-card-badge').innerHTML=`<span style="background:${card.color||'#4C1D95'};color:#fff;padding:5px 14px;border-radius:50px;font-size:13px;font-weight:900">${card.name||g.card}</span>`;
+  $('s-card-desc').textContent=card.desc||'';
+  const ledger=$('s-ledger');
+  if(!txs.length){ledger.innerHTML='<p style="color:var(--muted);font-weight:700;padding:8px 0">No transactions yet — start earning! ⚡</p>';return;}
+  ledger.innerHTML=`<table class="ledger"><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th><th>Balance</th></tr></thead><tbody>
+    ${txs.slice().reverse().map(t=>`<tr><td>${t.d}</td><td>${t.type}</td><td>${t.reason}</td><td class="${t.type}-td">${t.type==='earn'?'+':'−'}${t.amt}V</td><td>⚡${t.bal}V</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+/* ═══════════════ STORE RENDERER ════════════════ */
+function renderStore(elId,sBal){
+  const el=$(elId);if(!el)return;
+  let html='';
+  [0,1,2,3,4].forEach(t=>{
+    const items=S.store.filter(i=>i.tier===t);if(!items.length)return;
+    const sc=TSEC_COLORS[t];
+    html+=`<div style="margin-bottom:20px"><div class="tier-section-label" style="background:${sc.bg};color:${sc.color}">${sc.label}</div><div class="store-grid">`;
+    items.forEach(item=>{
+      const ca=sBal===null||sBal>=item.price;
+      html+=`<div class="store-card ${sBal!==null?(ca?'can-afford':'cant-afford'):''}">
+        <span style="position:absolute;top:8px;right:8px" class="tier-pill ${TCLS[t]}">${TNAME[t]}</span>
+        <h4>${item.name}</h4><p>${item.note}</p>
+        <div class="store-price">⚡ ${item.price}V</div>
+        ${ca&&sBal!==null?'<span class="afford-badge">✓ You can afford this!</span>':''}
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  el.innerHTML=html||'<p style="color:var(--muted);font-weight:700">Store is empty.</p>';
+}
+
+/* ═══════════════ EARN RENDERER ═════════════════ */
+function renderEarn(elId){
+  const el=$(elId);if(!el)return;
+  el.innerHTML=`<table class="earn-tbl" style="border-radius:16px;overflow:hidden"><thead><tr><th></th><th>Activity</th><th>⚡ Earns</th><th>When</th><th>Notes</th></tr></thead><tbody>
+    ${S.earn.map(e=>`<tr><td style="font-size:22px;text-align:center;padding:10px 8px">${e.icon}</td><td style="font-weight:800">${e.activity}</td>
+    <td><span class="earn-badge">${e.amount}</span>${e.partial?`<br><span style="font-size:11px;color:var(--muted);font-weight:600">${e.partial}</span>`:''}</td>
+    <td style="color:var(--muted);font-weight:600">${e.when}</td><td style="color:var(--muted);font-weight:600">${e.note}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+/* ═══════════════ BOARD ══════════════════════════ */
+function drawStars(){
+  const c=$('board-stars'),bp=$('pg-board');if(!c||!bp)return;
+  c.width=bp.scrollWidth||window.innerWidth;c.height=bp.scrollHeight||window.innerHeight;
+  const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+  for(let i=0;i<180;i++){const x=Math.random()*c.width,y=Math.random()*c.height,r=Math.random()*1.3+.2,a=Math.random()*.7+.15;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,${Math.random()>.85?180:255},${a})`;ctx.fill();}
+  for(let i=0;i<22;i++){const x=Math.random()*c.width,y=Math.random()*c.height;ctx.beginPath();ctx.arc(x,y,Math.random()*2+.5,0,Math.PI*2);ctx.fillStyle=`rgba(252,211,77,${Math.random()*.5+.2})`;ctx.fill();}
+}
+
+function buildTicker(){
+  const el=$('ticker');if(!el)return;
+  const top=S.groups.length?[...S.groups].sort((a,b)=>b.balance-a.balance)[0]:{name:'—',balance:0};
+  const items=[
+    ...S.earn.map(e=>`${e.icon} <b>${e.activity}</b> earns ${e.amount}`),
+    `🏆 Current leader: <b>${top.name}</b> — ⚡${fmt(top.balance)}V`,
+    `🛒 Supply Store open — bring your Volt Ledger to buy materials`,
+    `🧹 Clean Lab Award: +25V bonus for zero fines all 3 days!`,
+    `⚡ Starting balance is 150V — earn more to unlock upgrades!`,
+    ...S.earn.map(e=>`${e.icon} <b>${e.activity}</b> earns ${e.amount}`),
+    `🏆 Current leader: <b>${top.name}</b> — ⚡${fmt(top.balance)}V`,
+    `🛒 Supply Store open — bring your Volt Ledger to buy materials`,
+    `🧹 Clean Lab Award: +25V bonus for zero fines all 3 days!`,
+    `⚡ Starting balance is 150V — earn more to unlock upgrades!`,
+  ];
+  el.innerHTML=items.map(i=>`<span class="ticker-chip"><span class="ticker-gem"></span><span>${i}</span></span>`).join('');
+}
+
+function renderBoard(){
+  const grid=$('board-grid');if(!grid)return;
+  if(!S.groups.length){grid.innerHTML='<div style="color:rgba(255,255,255,.5);text-align:center;padding:48px;grid-column:1/-1;font-size:18px;font-weight:700">No groups yet — teacher must add groups in Setup! 🚀</div>';return;}
+  const sorted=[...S.groups].sort((a,b)=>b.balance-a.balance);
+  const maxBal=Math.max(...S.groups.map(g=>g.balance),150);
+  const avg=Math.round(S.groups.reduce((a,g)=>a+g.balance,0)/S.groups.length);
+  $('bf-groups').textContent=S.groups.length;
+  $('bf-leader').textContent=sorted[0]?.name||'—';
+  $('bf-avg').textContent='⚡'+fmt(avg);
+  $('bf-top').textContent='⚡'+fmt(sorted[0]?.balance||0);
+
+  grid.innerHTML=sorted.map((g,idx)=>{
+    const bal=fmt(g.balance),rank=idx+1;
+    const pct=Math.max(3,Math.min(100,bal/maxBal*100));
+    const isLeader=idx===0,isLow=bal<0,isWarn=bal>=0&&bal<50;
+    const cardCls=isLeader?'bcard-leader':isLow?'bcard-low':isWarn?'bcard-warn':'bcard-normal';
+    const voltCls=isLow?'bvolts-low':isLeader?'bvolts-leader':isWarn?'bvolts-warn':'bvolts-normal';
+    const barColor=isLow?'#EF4444':isLeader?'#FBBF24':isWarn?'#F97316':'#34D399';
+    const rnkCls=rank===1?'brank-1':rank===2?'brank-2':rank===3?'brank-3':'brank-n';
+    const rnkTxt=rank===1?'👑 #1 LEADER':rank===2?'🥈 #2':rank===3?'🥉 #3':'#'+rank;
+    const prev=prevBals[g.id];const delta=prev!==undefined?bal-prev:null;
+    const deltaEl=delta!==null&&delta!==0?`<div class="bdelta show" style="background:${delta>0?'rgba(52,211,153,.3)':'rgba(239,68,68,.3)'};color:${delta>0?'#34D399':'#EF4444'}">${delta>0?'+':''}${delta}V</div>`:'';
+    const icon=gIcon(S.groups.indexOf(g));
+    const card=CARDS[g.card]||{};
+    return `<div class="bcard ${cardCls}">
+      <div class="brank ${rnkCls}">${rnkTxt}</div>
+      <div class="bname">${icon} ${g.name}</div>
+      <div class="bcard-label">${card.name||g.card}</div>
+      <div style="position:relative;display:inline-block">
+        ${deltaEl}
+        <div class="bvolts ${voltCls}">${bal}</div>
+      </div>
+      <div class="bunit">⚡ Volts</div>
+      <div class="bbar-wrap"><div class="bbar" style="width:${pct}%;background:${barColor}"></div></div>
+      ${isLow?'<div class="bstatus" style="color:#FF6B6B">🧹 Room Reset Duty</div>':''}
+      ${isLeader&&!isLow?'<div class="bstatus" style="color:#FFE500">✨ Leading!</div>':''}
+      ${isWarn&&!isLow?'<div class="bstatus" style="color:#FFB347">💪 Earn more today!</div>':''}
+    </div>`;
+  }).join('');
+  S.groups.forEach(g=>{prevBals[g.id]=fmt(g.balance);});
+  buildTicker();
+  $('bf-time').textContent='Refreshed '+new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+
+setInterval(async()=>{if(!$('pg-board').classList.contains('hidden')){await loadState();renderBoard();}},15000);
+
+/* ═══════════════ CONFETTI ═══════════════════════ */
+function confetti(){
+  const c=$('confetti-canvas'),ctx=c.getContext('2d');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  const pts=Array.from({length:100},()=>({x:Math.random()*c.width,y:-14,vx:(Math.random()-.5)*6,vy:Math.random()*4+2,color:['#FCD34D','#86EFAC','#93C5FD','#F9A8D4','#A5B4FC','#FCA5A5'][Math.floor(Math.random()*6)],s:Math.random()*10+4,rot:Math.random()*360,spin:(Math.random()-.5)*10,op:1}));
+  let f=0;
+  (function draw(){ctx.clearRect(0,0,c.width,c.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.rot+=p.spin;p.op-=.007;p.vy+=.07;ctx.save();ctx.globalAlpha=Math.max(0,p.op);ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);ctx.restore();});f++;if(f<160)requestAnimationFrame(draw);else ctx.clearRect(0,0,c.width,c.height);})();
+}
+
+/* ═══════════════ INIT ═══════════════════════════ */
+async function init(){await loadState();showForm('none');}
+init();
+</script>
+</body>
+</html>
