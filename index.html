@@ -299,15 +299,16 @@ nav{
 
 <!-- NAV -->
 <nav>
-  <div class="logo">
+  <div class="logo" onclick="gotoPage('home')" style="cursor:pointer;user-select:none">
     <span class="logo-bolt">⚡</span>
     <div>Volt Economy<span class="logo-sub">STEAM Supply Store</span></div>
   </div>
   <div class="nav-right">
     <span class="who-pill hidden" id="nav-who"></span>
-    <button class="nav-pill hidden" id="nav-board" onclick="gotoPage('board')">📺 Board</button>
-    <button class="nav-pill hidden" id="nav-home" onclick="gotoPage('home')">🏠 Dashboard</button>
-    <button class="nav-pill hidden" id="nav-logout" onclick="logout()">👋 Log out</button>  </div>
+    <button class="nav-pill" id="nav-board" onclick="gotoPage('board')">📺 Board</button>
+    <button class="nav-pill" id="nav-home" onclick="gotoPage('home')">🏠 Dashboard</button>
+    <button class="nav-pill hidden" id="nav-logout" onclick="logout()">👋 Log out</button>
+  </div>
 </nav>
 
 <!-- ══ LOGIN ══════════════════════════════ -->
@@ -365,6 +366,7 @@ nav{
     <button class="tab-btn" onclick="tTab('store')">🛒 Store Items</button>
     <button class="tab-btn" onclick="tTab('earn')">⚡ Earning Opps</button>
     <button class="tab-btn" onclick="tTab('setup')">⚙️ Setup</button>
+    <button class="tab-btn" onclick="tTab('edp')">📝 EDP Question</button>
   </div>
 
   <div id="tt-groups">
@@ -399,6 +401,18 @@ nav{
     <div class="fun-grid fun-grid-2" style="gap:16px">
       <div class="card">
         <div class="card-title">➕ Add New Group</div>
+        <label class="field-label">Class Period</label>
+        <select class="field-input" id="ng-period" style="appearance:auto">
+          <option value="">— Select a class period —</option>
+          <option value="1A">1A</option>
+          <option value="2A">2A</option>
+          <option value="5A">5A</option>
+          <option value="6A">6A</option>
+          <option value="1B">1B</option>
+          <option value="2B">2B</option>
+          <option value="5B">5B</option>
+          <option value="6B">6B</option>
+        </select>
         <label class="field-label">Group Name</label>
         <input class="field-input" id="ng-name" placeholder="e.g. Team Ohm">
         <label class="field-label">Problem Card</label>
@@ -427,42 +441,86 @@ nav{
       </div>
     </div>
   </div>
+
+  <div id="tt-edp" class="hidden">
+    <div class="sec-hdr"><h2>📝 EDP Question for Students</h2></div>
+    <div class="fun-grid fun-grid-2" style="gap:16px">
+      <div class="card">
+        <div class="card-title">✏️ Set the Current Question</div>
+        <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px">Students will see this question when they log in. They type their answer and submit. You can see all responses below.</p>
+        <label class="field-label">Question</label>
+        <textarea class="field-input" id="edp-q-text" placeholder="e.g. What is one criterion your design must meet? Why did your group choose that design?" style="height:100px;resize:vertical"></textarea>
+        <label class="field-label">Question Label / Day</label>
+        <input class="field-input" id="edp-q-label" placeholder="e.g. Day 1 Exit Question">
+        <label class="field-label">Status</label>
+        <select class="field-input" id="edp-q-status" style="appearance:auto">
+          <option value="open">🟢 Open — students can answer</option>
+          <option value="closed">🔴 Closed — students can view but not edit</option>
+        </select>
+        <button class="btn btn-purple btn-block" onclick="saveEDPQuestion()">💾 Save &amp; Publish Question</button>
+        <div id="edp-q-alert" style="margin-top:10px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">👁️ Current Question Preview</div>
+        <div id="edp-q-preview" style="font-size:13px;color:var(--muted);font-weight:600">No question published yet.</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">📋 All Group Responses</div>
+      <div id="edp-responses-list"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ══ STUDENT DASHBOARD ═══════════════════ -->
 <div id="pg-student" class="page hidden">
   <div class="tab-bar">
-    <button class="tab-btn active" onclick="sTab('account')">⚡ My Account</button>
-    <button class="tab-btn" onclick="sTab('store')">🛒 Supply Store</button>
-    <button class="tab-btn" onclick="sTab('earn')">💰 How to Earn</button>
+    <button class="tab-btn active" onclick="sTab('account')">⚡ My Volts</button>
+    <button class="tab-btn" onclick="sTab('bought')">🛒 My Purchases</button>
+    <button class="tab-btn" onclick="sTab('store')">🏪 Store</button>
+    <button class="tab-btn" onclick="sTab('earn')">💰 Earn Volts</button>
+    <button class="tab-btn" onclick="sTab('edpq')">📝 Answer Question</button>
   </div>
 
   <div id="st-account">
-    <div class="fun-grid fun-grid-3" style="gap:14px;margin-bottom:16px">
-      <div class="stat-chip chip-gold">
-        <div class="sc-val" id="s-bal">—</div>
-        <div class="sc-lbl">⚡ My Volts</div>
-      </div>
+    <!-- Big balance display -->
+    <div style="text-align:center;padding:24px 0 16px">
+      <div style="font-size:14px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">My Current Balance</div>
+      <div style="font-size:80px;font-weight:900;color:var(--gold-dk);line-height:1" id="s-bal">—</div>
+      <div style="font-size:20px;font-weight:800;color:var(--gold-dk);margin-top:4px">⚡ Volts</div>
+    </div>
+
+    <!-- 3 stat chips -->
+    <div class="fun-grid fun-grid-3" style="gap:12px;margin-bottom:18px">
       <div class="stat-chip chip-green">
         <div class="sc-val" id="s-earned">—</div>
         <div class="sc-lbl">🎉 Total Earned</div>
       </div>
       <div class="stat-chip chip-red">
         <div class="sc-val" id="s-spent">—</div>
-        <div class="sc-lbl">🛒 Total Spent</div>
+        <div class="sc-lbl">💸 Total Spent</div>
+      </div>
+      <div class="stat-chip" style="background:var(--purple-lt);border:2px solid #DDD6FE">
+        <div class="sc-val" id="s-item-count" style="color:var(--purple-dk)">—</div>
+        <div class="sc-lbl" style="color:var(--purple-dk)">🛒 Items Bought</div>
       </div>
     </div>
-    <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div class="card-title" style="margin:0">🃏 My Problem Card</div>
-        <div id="s-card-badge"></div>
-      </div>
-      <div id="s-card-desc" style="font-size:13px;color:var(--muted);font-weight:600"></div>
-    </div>
+
+    <!-- Problem card — full display -->
+    <div id="s-card-full" style="margin-bottom:14px"></div>
+
+    <!-- Recent transactions (last 5 only, clean) -->
     <div class="card">
-      <div class="card-title">📜 Transaction History</div>
+      <div class="card-title">📜 Recent Transactions</div>
       <div id="s-ledger"></div>
     </div>
+  </div>
+
+  <!-- MY PURCHASES TAB -->
+  <div id="st-bought" class="hidden">
+    <div class="sec-hdr"><h2>🛒 What I Have Bought</h2></div>
+    <p style="font-size:13px;color:var(--muted);font-weight:600;margin-bottom:16px">Everything your group has purchased from the supply store so far.</p>
+    <div id="s-purchases-display"></div>
   </div>
 
   <div id="st-store" class="hidden">
@@ -477,6 +535,11 @@ nav{
   <div id="st-earn" class="hidden">
     <div class="sec-hdr"><h2>💰 Ways to Earn Volts Today!</h2></div>
     <div id="s-earn-display"></div>
+  </div>
+
+  <div id="st-edpq" class="hidden">
+    <div class="sec-hdr"><h2>📝 Engineering Question</h2></div>
+    <div id="s-edp-question-area"></div>
   </div>
 </div>
 
@@ -581,49 +644,63 @@ nav{
 <script>
 /* ═══════════════ DEFAULT DATA ══════════════════ */
 const DSTORE=[
-  {id:'led2',name:'Standard red LED (×2)',price:20,tier:0,note:'1 for build, 1 spare'},
-  {id:'aa',name:'AA battery + holder',price:25,tier:0,note:'Powers the basic circuit'},
-  {id:'wire12',name:'Copper wire, 12 in.',price:15,tier:0,note:'Main conductor'},
-  {id:'cardboard',name:'Cardboard sheet (8×10)',price:10,tier:0,note:'Enclosure / base'},
-  {id:'tape',name:'Masking tape',price:5,tier:0,note:'Insulating & securing'},
-  {id:'paperclip',name:'Paperclip switch',price:5,tier:0,note:'Manual open/close'},
-  {id:'foil',name:'Aluminum foil strip',price:5,tier:0,note:'Contact point material'},
-  {id:'rubber',name:'Rubber bands (×3)',price:5,tier:0,note:'Fastening'},
-  {id:'wire12b',name:'Extra wire, 12 in.',price:10,tier:1,note:'More routing options'},
-  {id:'clips',name:'Alligator clip leads (×2)',price:15,tier:1,note:'More reliable connections'},
-  {id:'aa2',name:'Second AA battery',price:20,tier:1,note:'More power / brighter LED'},
-  {id:'sticks',name:'Popsicle sticks (×6)',price:10,tier:1,note:'Structural framing'},
-  {id:'brad',name:'Brad / fastener (×2)',price:8,tier:1,note:'Pivot for lever switch'},
-  {id:'cup',name:'Plastic cup',price:10,tier:1,note:'Diffuser or shade'},
-  {id:'index',name:'Index cards (×3)',price:8,tier:1,note:'Labels & panels'},
-  {id:'colorled',name:'Colored LED (blue/green/white)',price:35,tier:2,note:'Different forward voltage'},
-  {id:'9v',name:'9V battery + snap connector',price:45,tier:2,note:'Higher voltage — needs resistor'},
-  {id:'cutape',name:'Copper tape, 6 in.',price:40,tier:2,note:'Pro-grade conductor'},
-  {id:'toggle',name:'Toggle switch (pre-made)',price:50,tier:2,note:'Replaces paperclip'},
-  {id:'resistors',name:'Resistor pack (×4)',price:30,tier:2,note:'Required with 9V battery'},
-  {id:'foam',name:'Foam core board (4×6)',price:35,tier:2,note:'Sturdier enclosure'},
-  {id:'breadboard',name:'Mini breadboard',price:60,tier:2,note:'Easy reconfiguration'},
-  {id:'multiled',name:'Multi-LED set (×4 mixed)',price:75,tier:3,note:'Series/parallel challenge'},
-  {id:'buzzer',name:'Piezo buzzer',price:70,tier:3,note:'Alarm card — auditory output'},
-  {id:'thread',name:'Conductive thread, 12 in.',price:90,tier:3,note:'Wearable wiring'},
-  {id:'velcro',name:'Velcro strip, 2 in.',price:25,tier:3,note:'Wearable attachment'},
-  {id:'battpack',name:'Small battery pack (3×AAA)',price:80,tier:3,note:'Compact wearable power'},
-  {id:'slide',name:'Slide switch (SPDT)',price:80,tier:3,note:'3-terminal switch'},
-  {id:'3dps',name:'3D Printed Part — Simple',price:150,tier:4,note:'Submit design file 2 days before. Teacher approval required.'},
-  {id:'3dpc',name:'3D Printed Part — Complex',price:250,tier:4,note:'Submit 3 days before. Design rationale in notebook required.'},
-  {id:'cardtrade',name:'Problem Card Trade',price:25,tier:4,note:'Random redraw. Max 2 per group.'},
-  {id:'hint',name:'Hint Token',price:20,tier:4,note:'Teacher gives ONE Socratic question.'},
+  {id:'microbit',name:'micro:bit + battery pack',price:40,tier:0,note:'Your power source. Handle with care!'},
+  {id:'clip2',name:'Alligator clip leads (x2)',price:15,tier:0,note:'Connects micro:bit pins to your LED'},
+  {id:'led1',name:'Basic LED (x1)',price:10,tier:0,note:'Standard red or yellow LED'},
+  {id:'tape6',name:'Masking tape (6 inches)',price:10,tier:0,note:'6 inches only — plan before you tape!'},
+  {id:'card1',name:'Cardboard piece (4x6 in.)',price:10,tier:0,note:'One piece. Think before you cut.'},
+  {id:'foil',name:'Aluminum foil strip',price:5,tier:0,note:'Use as a contact switch surface'},
+  {id:'led2',name:'Extra LED (x1)',price:8,tier:1,note:'Second LED for multi-light designs'},
+  {id:'clip2b',name:'Extra alligator clips (x2)',price:12,tier:1,note:'More connections'},
+  {id:'tape6b',name:'Extra tape (6 more inches)',price:8,tier:1,note:'More tape if you ran out'},
+  {id:'card2',name:'Extra cardboard piece',price:10,tier:1,note:'Second piece for enclosure'},
+  {id:'brad',name:'Brad / fastener (x2)',price:8,tier:1,note:'Pivot point for lever switch'},
+  {id:'paperclip',name:'Paperclips (x3)',price:5,tier:1,note:'Switch contacts and hooks'},
+  {id:'sticks',name:'Craft sticks (x4)',price:8,tier:1,note:'Structural framing'},
+  {id:'led-color',name:'Colored LED — choose color',price:20,tier:2,note:'Blue, green, or white. Different brightness!'},
+  {id:'buzzer',name:'Piezo buzzer',price:35,tier:2,note:'Makes sound — great for alarm designs'},
+  {id:'copper',name:'Copper tape, 4 in.',price:25,tier:2,note:'Better conductor. Sticks to surfaces.'},
+  {id:'led4',name:'Multi-LED set (x4 mixed)',price:40,tier:2,note:'Multi-light designs. Careful wiring needed.'},
+  {id:'foam',name:'Foam core piece (4x4)',price:20,tier:2,note:'Sturdier than cardboard'},
+  {id:'rubber',name:'Rubber bands (x4)',price:5,tier:2,note:'Hold things without glue'},
+  {id:'velcro',name:'Velcro strip (2 in.)',price:20,tier:3,note:'Attach and detach components'},
+  {id:'clip4',name:'Extra alligator clips (x4)',price:22,tier:3,note:'Four more connections'},
+  {id:'thread',name:'Conductive thread (10 in.)',price:50,tier:3,note:'Sew circuits into fabric — wearable only'},
+  {id:'hint',name:'Hint Token',price:15,tier:3,note:'Teacher gives you ONE helpful question. Not the answer!'},
+  {id:'3dp',name:'3D Printed Part',price:80,tier:4,note:'Submit design file 2 days before. Teacher approval required.'},
+  {id:'cardtrade',name:'Problem Card Trade',price:20,tier:4,note:'Random redraw only. Max 2 trades per group.'},
 ];
 const DEARN=[
-  {id:'qw',icon:'⚡',activity:'Daily Quick Write (5 min)',amount:'+10V',partial:'',when:'End of class',note:'Pay at END, never at start. Check for real effort.'},
-  {id:'quiz',icon:'📝',activity:'Quiz Score',amount:'+1V per 10% scored',partial:'100% = +10V',when:'Day quiz returned',note:'Simple: score divided by 10, rounded. Kids can calculate this themselves.'},
-  {id:'hw',icon:'🏠',activity:'Homework (on time)',amount:'+10V',partial:'+5V if late',when:'Start of next class',note:'Late = half. Missing = 0. No penalty, just reduced reward.'},
-  {id:'nb',icon:'📓',activity:'Notebook spot check',amount:'+10V',partial:'',when:'On spot check',note:'Announce which page — not when. Surprise timing keeps notebooks current.'},
-  {id:'peer',icon:'🎓',activity:'Teach a peer something',amount:'+15V',partial:'Once per project',when:'When teacher observes',note:'Peer must be able to repeat it back. One per student.'},
-  {id:'iter',icon:'🔬',activity:'Extra Test Cycle (Round 3)',amount:'+20V',partial:'',when:'Notebook review',note:'Must be data-driven — write the change reason BEFORE building.'},
-  {id:'submit',icon:'✅',activity:'Turn everything in on time',amount:'+10V',partial:'',when:'End of Day 3',note:'All deliverables complete by close of Day 3.'},
-  {id:'clean',icon:'🧹',activity:'Clean Lab Award',amount:'+25V BONUS',partial:'',when:'End of Day 3',note:'Zero cleanup fines across all 3 days — announce this on Day 1!'},
+  {id:'qw',icon:'⚡',activity:'Quick Write (5 min, every class)',amount:'+5V',partial:'',when:'End of class — teacher initials it',note:'Lower amount keeps economy tight. +5V × 3 days = +15V total from quick writes.'},
+  {id:'quiz',icon:'📝',activity:'Quiz Score',amount:'Score ÷ 20, rounded',partial:'e.g. 80% = +4V',when:'Day quiz comes back',note:'Deliberately small — a perfect quiz earns +5V. Keeps upgrades out of reach without effort.'},
+  {id:'hw',icon:'🏠',activity:'Homework (on time)',amount:'+8V',partial:'+4V if late',when:'Start of next class',note:'Late = half. Missing = 0. Simple.'},
+  {id:'clean',icon:'🧹',activity:'Clean Lab — each day',amount:'+5V per day',partial:'',when:'End of each class',note:'Per-day reward. Groups earn up to +15V total if clean all 3 days. Fines still apply for messy areas.'},
+  {id:'iter',icon:'🔬',activity:'Extra Test Round (Round 3)',amount:'+10V',partial:'',when:'When notebook reviewed',note:'Must document: what changed, why, what happened. Quality gated.'},
+  {id:'submit',icon:'✅',activity:'Turn in everything on time',amount:'+5V',partial:'',when:'End of Day 3',note:'Small bonus — not enough to be gamed, but rewards diligence.'},
 ];
+const CARD_DETAILS={
+  A:{
+    emoji:'💡', title:'The Night-Light', client:'Client: Community Center Director',
+    mission:'The community center hallway gets dark at night. Build a light that staff can switch ON and OFF by hand. When the switch is closed, the LED lights up. When it opens, the light goes off.',
+    must:['LED lights when switch is closed','LED turns OFF when switch opens','Switch works 3 out of 3 tries','Fits in a 4×6 inch space'],
+    limits:['Budget: 100V of supplies','Only use store materials','Done in 3 class periods','Cannot use the micro:bit buttons as your switch'],
+    kit:['micro:bit + battery pack','2 alligator clips','1 LED','6 in. tape','4×6 cardboard','foil strip'],
+  },
+  B:{
+    emoji:'🚨', title:'The Library Alarm', client:'Client: School Librarian',
+    mission:'Books keep disappearing! Build an alarm that triggers (lights up or makes sound) when the return box lid is opened. When the lid closes again, the alarm should turn off automatically.',
+    must:['Alert turns ON when lid opens','Alert turns OFF when lid closes','Works 3 out of 3 tries','Visible or audible from 3 feet away'],
+    limits:['Budget: 100V of supplies','Box no bigger than 6×6×4 inches','Done in 3 class periods','Must not need someone standing next to it'],
+    kit:['micro:bit + battery pack','2 alligator clips','1 LED','6 in. tape','4×6 cardboard','foil strip'],
+  },
+  C:{
+    emoji:'👕', title:'The Stage Badge', client:'Client: Drama Club Director',
+    mission:'The school play needs glowing badges for the robot characters. Build a wearable LED badge that an actor can switch on, wear safely during the show, and remove quickly between scenes.',
+    must:['At least 1 LED lights up','Switch is reachable while wearing it','Stays on the costume while moving','Can be taken off and put back on in under 2 minutes'],
+    limits:['Budget: 100V of supplies','Must be wearable — not handheld','Battery and micro:bit must be secured','Done in 3 class periods'],
+    kit:['micro:bit + battery pack','2 alligator clips','1 LED','6 in. tape','4×6 cardboard','foil strip'],
+  },
+};
 const CARDS={
   A:{name:'💡 Card A – Night-Light',color:'#4C1D95',bg:'#EDE9FE',desc:'Design a switch-operated LED night-light for the community center.'},
   B:{name:'🚨 Card B – Alarm/Buzzer',color:'#7F1D1D',bg:'#FEE2E2',desc:'Design a circuit alarm for the library return box.'},
@@ -642,20 +719,20 @@ const GROUP_COLORS=[
 ];
 
 /* ═══════════════ STATE ═════════════════════════ */
-let S={pw:'steam2024',groups:[],store:[],earn:[],user:null};
+let S={pw:'steam2024',groups:[],store:[],earn:[],edpQuestion:{text:'',label:'',status:'closed',answers:{}},user:null};
 let pendingGid=null,prevBals={};
 
 /* ═══════════════ STORAGE ═══════════════════════ */
-async function save(){try{await window.storage.set('volt3',JSON.stringify({pw:S.pw,groups:S.groups,store:S.store,earn:S.earn}),false);}catch(e){}}
+async function save(){try{await window.storage.set('volt3',JSON.stringify({pw:S.pw,groups:S.groups,store:S.store,earn:S.earn,edpQuestion:S.edpQuestion}),false);}catch(e){}}
 async function loadState(){
-  try{const r=await window.storage.get('volt3',false);if(r&&r.value){const d=JSON.parse(r.value);S.pw=d.pw||'steam2024';S.groups=d.groups||[];S.store=d.store||[];S.earn=d.earn||[];}}catch(e){}
+  try{const r=await window.storage.get('volt3',false);if(r&&r.value){const d=JSON.parse(r.value);S.pw=d.pw||'steam2024';S.groups=d.groups||[];S.store=d.store||[];S.earn=d.earn||[];S.edpQuestion=d.edpQuestion||{text:'',label:'',status:'closed',answers:{}};}}catch(e){}
   if(!S.store.length)S.store=[...DSTORE];
   if(!S.earn.length)S.earn=[...DEARN];
   if(!S.groups.length){
     S.groups=[
-      {id:'g1',name:'Team Ohm',pin:'1111',card:'A',balance:150,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150}]},
-      {id:'g2',name:'Team Faraday',pin:'2222',card:'B',balance:158,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150},{d:'Day 1',type:'earn',amt:8,reason:'Quick Write',bal:158}]},
-      {id:'g3',name:'Team Tesla',pin:'3333',card:'C',balance:135,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150},{d:'Day 1',type:'spend',amt:15,reason:'Extra wire',bal:135}]},
+      {id:'g1',period:'1A',name:'Team Ohm',pin:'1111',card:'A',surprise:null,balance:100,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100}]},
+      {id:'g2',period:'1A',name:'Team Faraday',pin:'2222',card:'B',surprise:null,balance:105,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100},{d:'Day 1',type:'earn',amt:5,reason:'Quick Write',bal:105}]},
+      {id:'g3',period:'2A',name:'Team Tesla',pin:'3333',card:'C',surprise:null,balance:88,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100},{d:'Day 1',type:'spend',amt:12,reason:'Extra alligator clips',bal:88}]},
     ];
     await save();
   }
@@ -684,33 +761,30 @@ function closeModals(){['modal-tx','modal-item','modal-earn'].forEach(id=>$(id).
 function gotoPage(pg){
   ['pg-login','pg-teacher-form','pg-student-form','pg-teacher','pg-student','pg-board','modal-tx','modal-item','modal-earn']
     .forEach(id=>$(id).classList.add('hidden'));
-  ['nav-board','nav-home','nav-logout','nav-who'].forEach(id=>$(id).classList.add('hidden'));
+  $('nav-logout').classList.add('hidden');
+  $('nav-who').classList.add('hidden');
 
   if(pg==='board'){
     $('pg-board').classList.remove('hidden');
     renderBoard();drawStars();
-    if(S.user){
-      $('nav-who').classList.remove('hidden');
-      $('nav-home').classList.remove('hidden');
-      $('nav-logout').classList.remove('hidden');
-    } else {
-      $('nav-home').classList.remove('hidden');
-    }
+    if(S.user){$('nav-who').classList.remove('hidden');$('nav-logout').classList.remove('hidden');}
     return;
   }
   if(pg==='home'){
-    if(!S.user){showForm('none');return;}    if(S.user.role==='teacher'){
+    if(!S.user){showForm('none');return;}
+    if(S.user.role==='teacher'){
       $('pg-teacher').classList.remove('hidden');
       $('nav-who').textContent='🎓 Teacher';$('nav-who').classList.remove('hidden');
-      $('nav-board').classList.remove('hidden');$('nav-logout').classList.remove('hidden');
+      $('nav-logout').classList.remove('hidden');
       renderTGroups();renderTStore();renderTEarn();renderManage();
       tTab('groups');
+      renderEDPQuestionPreview();
     } else {
       $('pg-student').classList.remove('hidden');
       const g=G(S.user.gid);
-      $('nav-who').textContent=(g?gIcon(S.groups.indexOf(g))+' '+g.name:'');
+      $('nav-who').textContent=(g?gIcon(S.groups.indexOf(g))+' '+g.name+(g.period?' · '+g.period:''):'');
       $('nav-who').classList.remove('hidden');
-      $('nav-board').classList.remove('hidden');$('nav-logout').classList.remove('hidden');
+      $('nav-logout').classList.remove('hidden');
       renderSAccount();
     }
     return;
@@ -721,7 +795,26 @@ function showForm(which){
   ['pg-teacher-form','pg-student-form','pg-login'].forEach(id=>$(id).classList.add('hidden'));
   if(which==='none'){$('pg-login').classList.remove('hidden');return;}
   $('pg-'+which+'-form').classList.remove('hidden');
-  if(which==='student'){$('s-grp-sel').innerHTML=S.groups.map(g=>`<option value="${g.id}">${gIcon(S.groups.indexOf(g))} ${g.name}</option>`).join('');}
+  if(which==='student'){
+    const PERIODS=['1A','2A','5A','6A','1B','2B','5B','6B'];
+    const sel=$('s-grp-sel');
+    const withPeriod=S.groups.filter(g=>g.period);
+    const withoutPeriod=S.groups.filter(g=>!g.period);
+    let opts='';
+    PERIODS.forEach(p=>{
+      const pg=withPeriod.filter(g=>g.period===p);
+      if(!pg.length)return;
+      opts+=`<optgroup label="Period ${p}">`;
+      pg.forEach(g=>{ opts+=`<option value="${g.id}">${gIcon(S.groups.indexOf(g))} ${g.name}</option>`; });
+      opts+='</optgroup>';
+    });
+    if(withoutPeriod.length){
+      opts+='<optgroup label="No Period">';
+      withoutPeriod.forEach(g=>{ opts+=`<option value="${g.id}">${gIcon(S.groups.indexOf(g))} ${g.name}</option>`; });
+      opts+='</optgroup>';
+    }
+    sel.innerHTML=opts||'<option disabled>No groups added yet</option>';
+  }
 }
 function logout(){S.user=null;showForm('none');}
 
@@ -740,39 +833,90 @@ function doStudentLogin(){
 
 /* ═══════════════ TABS ══════════════════════════ */
 function tTab(tab){
-  ['groups','store','earn','setup'].forEach(t=>$('tt-'+t).classList.toggle('hidden',t!==tab));
-  document.querySelectorAll('#pg-teacher .tab-btn').forEach((el,i)=>el.classList.toggle('active',['groups','store','earn','setup'][i]===tab));
+  ['groups','store','earn','setup','edp'].forEach(t=>$('tt-'+t).classList.toggle('hidden',t!==tab));
+  document.querySelectorAll('#pg-teacher .tab-btn').forEach((el,i)=>el.classList.toggle('active',['groups','store','earn','setup','edp'][i]===tab));
   if(tab==='setup')renderManage();
+  if(tab==='edp'){renderEDPQuestionEditor();renderEDPResponses();}
 }
 function sTab(tab){
-  ['account','store','earn'].forEach(t=>$('st-'+t).classList.toggle('hidden',t!==tab));
-  document.querySelectorAll('#pg-student .tab-btn').forEach((el,i)=>el.classList.toggle('active',['account','store','earn'][i]===tab));
+  ['account','bought','store','earn','edpq'].forEach(t=>$('st-'+t).classList.toggle('hidden',t!==tab));
+  document.querySelectorAll('#pg-student .tab-btn').forEach((el,i)=>el.classList.toggle('active',['account','bought','store','earn','edpq'][i]===tab));
   if(tab==='store'){const g=G(S.user?.gid);$('s-store-bal').textContent=`⚡ ${fmt(g?.balance||0)}V`;renderStore('s-store-display',g?.balance??null);}
   if(tab==='earn')renderEarn('s-earn-display');
+  if(tab==='bought')renderPurchases();
+  if(tab==='edpq')renderStudentEDPQuestion();
 }
 
 /* ═══════════════ TEACHER — GROUPS ══════════════ */
 function renderTGroups(){
   const el=$('t-groups-list');
   if(!S.groups.length){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">No groups yet — go to Setup tab to add groups! 🚀</div>';return;}
-  el.innerHTML=S.groups.map((g,idx)=>{
-    const c=gColor(idx),icon=gIcon(idx),bal=fmt(g.balance);
-    const bc=bal<0?'var(--red)':bal>200?'var(--green)':'var(--gold-dk)';
-    return `<div class="group-row">
-      <div class="group-avatar" style="background:${c.bg};border-color:${c.border};color:${c.icon}">${icon}</div>
-      <div class="group-info">
-        <div class="group-name">${g.name}</div>
-        <div class="group-card-lbl">${CARDS[g.card]?.name||g.card}</div>
-      </div>
-      <div class="group-bal" style="color:${bc}">⚡${bal}V</div>
-      <div class="group-actions">
-        <button class="btn btn-gold btn-sm" onclick="openTx('${g.id}','earn')">➕ Earn</button>
-        <button class="btn btn-teal btn-sm" onclick="openTx('${g.id}','spend')">🛒 Spend</button>
-        <button class="btn btn-red btn-sm" onclick="openTx('${g.id}','fine')">⚠️ Fine</button>
-        <button class="btn btn-ghost btn-sm" onclick="viewLedger('${g.id}')">📜 Ledger</button>
-      </div>
+  const PERIODS=['1A','2A','5A','6A','1B','2B','5B','6B'];
+  const PERIOD_COLORS={
+    '1A':'#4C1D95','2A':'#0F6E56','5A':'#78350F','6A':'#1E3A8A',
+    '1B':'#7F1D1D','2B':'#134E4A','5B':'#7C2D12','6B':'#1E40AF'
+  };
+  const PERIOD_BG={
+    '1A':'#EDE9FE','2A':'#CCFBF1','5A':'#FEF3C7','6A':'#DBEAFE',
+    '1B':'#FEE2E2','2B':'#D0EFED','5B':'#FFEDD5','6B':'#DBEAFE'
+  };
+  let html='';
+  // Groups with a period, organized by period order
+  const withPeriod=S.groups.filter(g=>g.period);
+  const withoutPeriod=S.groups.filter(g=>!g.period);
+  PERIODS.forEach(period=>{
+    const pGroups=withPeriod.filter(g=>g.period===period);
+    if(!pGroups.length)return;
+    const pc=PERIOD_COLORS[period]||'#4C1D95';
+    const pb=PERIOD_BG[period]||'#EDE9FE';
+    html+=`<div style="background:${pb};border-left:5px solid ${pc};padding:10px 16px;display:flex;align-items:center;gap:10px">
+      <div style="font-size:22px;font-weight:900;color:${pc}">Period ${period}</div>
+      <div style="font-size:12px;color:${pc};font-weight:700;opacity:.7">${pGroups.length} group${pGroups.length!==1?'s':''}</div>
     </div>`;
-  }).join('');
+    pGroups.forEach((g,localIdx)=>{
+      const idx=S.groups.indexOf(g);
+      const c=gColor(idx),icon=gIcon(idx),bal=fmt(g.balance);
+      const bc=bal<0?'var(--red)':bal>150?'var(--green)':'var(--gold-dk)';
+      html+=`<div class="group-row" style="padding-left:24px">
+        <div class="group-avatar" style="background:${c.bg};border-color:${pc};color:${pc}">${icon}</div>
+        <div class="group-info">
+          <div class="group-name">${g.name}</div>
+          <div class="group-card-lbl">${CARDS[g.card]?.name||g.card}</div>
+        </div>
+        <div class="group-bal" style="color:${bc}">⚡${bal}V</div>
+        <div class="group-actions">
+          <button class="btn btn-gold btn-sm" onclick="openTx('${g.id}','earn')">➕ Earn</button>
+          <button class="btn btn-teal btn-sm" onclick="openTx('${g.id}','spend')">🛒 Spend</button>
+          <button class="btn btn-red btn-sm" onclick="openTx('${g.id}','fine')">⚠️ Fine</button>
+          <button class="btn btn-ghost btn-sm" onclick="viewLedger('${g.id}')">📜 Ledger</button>
+        </div>
+      </div>`;
+    });
+  });
+  // Groups without a period (legacy / unassigned)
+  if(withoutPeriod.length){
+    html+=`<div style="background:#F1EFE8;border-left:5px solid #6B7280;padding:10px 16px"><div style="font-size:16px;font-weight:900;color:#6B7280">No Period Assigned</div></div>`;
+    withoutPeriod.forEach((g)=>{
+      const idx=S.groups.indexOf(g);
+      const c=gColor(idx),icon=gIcon(idx),bal=fmt(g.balance);
+      const bc=bal<0?'var(--red)':bal>150?'var(--green)':'var(--gold-dk)';
+      html+=`<div class="group-row" style="padding-left:24px">
+        <div class="group-avatar" style="background:${c.bg};border-color:${c.border};color:${c.icon}">${icon}</div>
+        <div class="group-info">
+          <div class="group-name">${g.name}</div>
+          <div class="group-card-lbl">${CARDS[g.card]?.name||g.card}</div>
+        </div>
+        <div class="group-bal" style="color:${bc}">⚡${bal}V</div>
+        <div class="group-actions">
+          <button class="btn btn-gold btn-sm" onclick="openTx('${g.id}','earn')">➕ Earn</button>
+          <button class="btn btn-teal btn-sm" onclick="openTx('${g.id}','spend')">🛒 Spend</button>
+          <button class="btn btn-red btn-sm" onclick="openTx('${g.id}','fine')">⚠️ Fine</button>
+          <button class="btn btn-ghost btn-sm" onclick="viewLedger('${g.id}')">📜 Ledger</button>
+        </div>
+      </div>`;
+    });
+  }
+  el.innerHTML=html;
 }
 function openTx(gid,type){
   pendingGid=gid;const g=G(gid);
@@ -874,45 +1018,199 @@ async function delEarn(id){if(!confirm('Remove this opportunity?'))return;S.earn
 
 /* ═══════════════ TEACHER — SETUP ═══════════════ */
 async function addGroup(){
-  const name=$('ng-name').value.trim(),card=$('ng-card').value,pin=$('ng-pin').value.trim();
-  if(!name||pin.length<4){showAlert('ng-alert','⚠️ Name and 4-digit PIN required!','bad');return;}
-  if(S.groups.find(g=>g.name.toLowerCase()===name.toLowerCase())){showAlert('ng-alert','⚠️ Group name already exists!','bad');return;}
-  S.groups.push({id:'g'+Date.now(),name,pin,card,balance:150,transactions:[{d:'Start',type:'earn',amt:150,reason:'Starting balance',bal:150}]});
-  await save();showAlert('ng-alert',`✅ ${name} added with ⚡150V!`,'ok');
-  $('ng-name').value='';$('ng-pin').value='';renderManage();renderTGroups();
+  const period=$('ng-period').value,name=$('ng-name').value.trim(),card=$('ng-card').value,pin=$('ng-pin').value.trim();
+  if(!period){showAlert('ng-alert','⚠️ Select a class period!','bad');return;}
+  if(!name||pin.length<4){showAlert('ng-alert','⚠️ Group name and 4-digit PIN required!','bad');return;}
+  if(S.groups.find(g=>g.name.toLowerCase()===name.toLowerCase()&&g.period===period)){showAlert('ng-alert','⚠️ A group with that name already exists in this period!','bad');return;}
+  S.groups.push({id:'g'+Date.now(),period,name,pin,card,surprise:null,balance:100,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100}]});
+  await save();showAlert('ng-alert',`✅ ${name} (${period}) added with ⚡100V!`,'ok');
+  $('ng-name').value='';$('ng-pin').value='';$('ng-period').value='';renderManage();renderTGroups();
 }
 async function removeGroup(id){if(!confirm('Remove this group? This cannot be undone.'))return;S.groups=S.groups.filter(g=>g.id!==id);await save();renderManage();renderTGroups();}
 function renderManage(){
   const el=$('manage-list');if(!el)return;
   if(!S.groups.length){el.innerHTML='<p style="color:var(--muted);font-weight:700">No groups yet.</p>';return;}
-  el.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px;font-family:inherit">
+  // Add a period filter dropdown
+  const periods=['All',...new Set(S.groups.map(g=>g.period||'—').sort())];
+  const currentFilter=(el.dataset.filter)||'All';
+  const filtered=currentFilter==='All'?S.groups:S.groups.filter(g=>(g.period||'—')===currentFilter);
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <span style="font-size:13px;font-weight:800;color:var(--muted)">Filter by period:</span>
+      ${periods.map(p=>`<button onclick="filterManage('${p}')" style="padding:5px 14px;border-radius:50px;border:2px solid ${currentFilter===p?'var(--purple)':'var(--border)'};background:${currentFilter===p?'var(--purple)':'transparent'};color:${currentFilter===p?'#fff':'var(--muted)'};font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">${p}</button>`).join('')}
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;font-family:inherit">
     <thead><tr style="background:var(--purple-lt)">
+      <th style="padding:9px 12px;text-align:left;font-weight:900;color:var(--purple-dk)">Period</th>
       <th style="padding:9px 12px;text-align:left;font-weight:900;color:var(--purple-dk)">Group</th>
       <th style="padding:9px 12px;font-weight:900;color:var(--purple-dk)">Card</th>
       <th style="padding:9px 12px;font-weight:900;color:var(--purple-dk)">PIN</th>
       <th style="padding:9px 12px;font-weight:900;color:var(--purple-dk)">Balance</th>
       <th style="padding:9px 12px"></th>
     </tr></thead>
-    <tbody>${S.groups.map((g,i)=>`<tr><td style="padding:9px 12px;font-weight:800">${gIcon(i)} ${g.name}</td><td style="padding:9px 12px;color:var(--muted);font-weight:600">${CARDS[g.card]?.name||g.card}</td><td style="padding:9px 12px;font-family:monospace;font-weight:700">${g.pin}</td><td style="padding:9px 12px;font-weight:900;color:var(--gold-dk)">⚡${fmt(g.balance)}V</td><td style="padding:9px 12px"><button class="btn btn-red btn-sm" onclick="removeGroup('${g.id}')">🗑️ Remove</button></td></tr>`).join('')}</tbody>
+    <tbody>${filtered.map((g,i)=>{const idx=S.groups.indexOf(g);return`<tr style="border-bottom:1px solid #F3F4F6"><td style="padding:9px 12px"><span style="background:var(--purple-lt);color:var(--purple-dk);padding:2px 10px;border-radius:50px;font-size:12px;font-weight:900">${g.period||'—'}</span></td><td style="padding:9px 12px;font-weight:800">${gIcon(idx)} ${g.name}</td><td style="padding:9px 12px;color:var(--muted);font-weight:600;font-size:12px">${CARDS[g.card]?.name||g.card}</td><td style="padding:9px 12px;font-family:monospace;font-weight:700">${g.pin}</td><td style="padding:9px 12px;font-weight:900;color:var(--gold-dk)">⚡${fmt(g.balance)}V</td><td style="padding:9px 12px"><button class="btn btn-red btn-sm" onclick="removeGroup('${g.id}')">🗑️</button></td></tr>`;}).join('')}</tbody>
   </table>`;
+  el.dataset.filter=currentFilter;
+}
+function filterManage(period){
+  const el=$('manage-list');if(el)el.dataset.filter=period;
+  renderManage();
 }
 async function changePw(){const n=$('npw1').value,c=$('npw2').value;if(!n||n.length<4){showAlert('pw-alert','⚠️ Min 4 characters.','bad');return;}if(n!==c){showAlert('pw-alert','⚠️ Passwords don\'t match!','bad');return;}S.pw=n;await save();showAlert('pw-alert','✅ Password updated!','ok');$('npw1').value='';$('npw2').value='';}
 
 /* ═══════════════ STUDENT ACCOUNT ═══════════════ */
-function renderSAccount(){
+
+
+/* ═══ PURCHASES TAB ══ */
+function renderPurchases(){
+  const el=$('s-purchases-display');if(!el)return;
+  const g=G(S.user?.gid);if(!g){el.innerHTML='';return;}
+  const purchases=(g.transactions||[]).filter(t=>t.type==='spend');
+  if(!purchases.length){
+    el.innerHTML=`<div class="card" style="text-align:center;padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">🛒</div>
+      <div style="font-size:18px;font-weight:800;color:var(--muted)">Nothing purchased yet!</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:6px;font-weight:600">Visit the Store tab to see what's available.</div>
+    </div>`;
+    return;
+  }
+  const totalSpent=purchases.reduce((a,t)=>a+t.amt,0);
+  el.innerHTML=`
+    <div style="background:var(--purple-lt);border:2px solid #DDD6FE;border-radius:16px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:14px;font-weight:800;color:var(--purple-dk)">${purchases.length} item${purchases.length!==1?'s':''} purchased</div>
+      <div style="font-size:18px;font-weight:900;color:var(--red-dk)">💸 ${totalSpent}V spent total</div>
+    </div>
+    <div class="card" style="padding:0">
+      ${purchases.map((p,i)=>`
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:${i<purchases.length-1?'2px solid #F3F4F6':'none'}">
+          <div style="width:42px;height:42px;border-radius:12px;background:var(--gold-lt);border:2px solid #FDE68A;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🛒</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:800;color:var(--text)">${p.reason}</div>
+            <div style="font-size:12px;color:var(--muted);font-weight:600">${p.d}</div>
+          </div>
+          <div style="font-size:18px;font-weight:900;color:var(--red-dk)">−${p.amt}V</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ═══ EDP QUESTION — TEACHER SIDE ══ */
+function renderEDPQuestionEditor(){
+  const q=S.edpQuestion;
+  $('edp-q-text').value=q.text||'';
+  $('edp-q-label').value=q.label||'';
+  $('edp-q-status').value=q.status||'closed';
+  renderEDPQuestionPreview();
+}
+function renderEDPQuestionPreview(){
+  const el=$('edp-q-preview');if(!el)return;
+  const q=S.edpQuestion;
+  if(!q.text){el.innerHTML='<p style="color:var(--muted);font-weight:600;font-size:13px">No question published yet. Write one and click Save.</p>';return;}
+  el.innerHTML=`
+    <div style="margin-bottom:8px">
+      <span style="background:${q.status==='open'?'var(--green-lt)':'var(--red-lt)'};color:${q.status==='open'?'var(--green-dk)':'var(--red-dk)'};padding:3px 12px;border-radius:50px;font-size:12px;font-weight:900">${q.status==='open'?'🟢 OPEN':'🔴 CLOSED'}</span>
+      <span style="font-size:12px;color:var(--muted);font-weight:600;margin-left:8px">${q.label||''}</span>
+    </div>
+    <div style="font-size:16px;font-weight:800;color:var(--purple-dk);line-height:1.5;margin-bottom:8px">${q.text}</div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600">${Object.keys(q.answers||{}).length} response${Object.keys(q.answers||{}).length!==1?'s':''} submitted</div>`;
+}
+async function saveEDPQuestion(){
+  const text=$('edp-q-text').value.trim();
+  const label=$('edp-q-label').value.trim();
+  const status=$('edp-q-status').value;
+  if(!text){showAlert('edp-q-alert','⚠️ Enter a question first!','bad');return;}
+  const isNewQuestion=text!==S.edpQuestion.text;
+  S.edpQuestion={text,label,status,answers:isNewQuestion?{}:(S.edpQuestion.answers||{})};
+  await save();
+  renderEDPQuestionPreview();
+  renderEDPResponses();
+  showAlert('edp-q-alert',isNewQuestion?'✅ New question published! Previous answers cleared.':'✅ Question updated!','ok');
+}
+function renderEDPResponses(){
+  const el=$('edp-responses-list');if(!el)return;
+  const q=S.edpQuestion;
+  const answers=q.answers||{};
+  const gids=Object.keys(answers);
+  if(!q.text){el.innerHTML='<p style="color:var(--muted);font-size:13px;font-weight:600">Publish a question first.</p>';return;}
+  if(!gids.length){el.innerHTML='<p style="color:var(--muted);font-size:13px;font-weight:600">No responses yet. Students will see this question when they click the 📝 Answer Question tab.</p>';return;}
+  el.innerHTML=`<div style="margin-bottom:12px;font-size:13px;font-weight:700;color:var(--muted)">${gids.length} of ${S.groups.length} group${S.groups.length!==1?'s':''} responded</div>`+
+  gids.map(gid=>{
+    const g=G(gid);const idx=g?S.groups.indexOf(g):0;
+    const c=gColor(idx),icon=g?gIcon(idx):'❓';
+    const ans=answers[gid];
+    return `<div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:${c.bg};border:2px solid ${c.border};display:flex;align-items:center;justify-content:center;font-size:18px">${icon}</div>
+        <div>
+          <div style="font-size:14px;font-weight:900;color:var(--purple-dk)">${g?g.name:'Unknown Group'}</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600">${ans.submittedAt||''}</div>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:600;color:var(--text);background:var(--gray-lt);border-radius:10px;padding:12px 14px;line-height:1.6">${ans.text||'(no answer)'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══ EDP QUESTION — STUDENT SIDE ══ */
+function renderStudentEDPQuestion(){
+  const el=$('s-edp-question-area');if(!el)return;
+  const g=G(S.user?.gid);if(!g){el.innerHTML='';return;}
+  const q=S.edpQuestion;
+  if(!q||!q.text){
+    el.innerHTML=`<div class="card" style="text-align:center;padding:40px">
+      <div style="font-size:48px;margin-bottom:12px">📝</div>
+      <div style="font-size:18px;font-weight:800;color:var(--muted)">No question yet!</div>
+      <div style="font-size:14px;color:var(--muted);margin-top:6px;font-weight:600">Your teacher hasn't posted a question. Check back soon.</div>
+    </div>`;
+    return;
+  }
+  const existing=q.answers&&q.answers[g.id]?q.answers[g.id].text:'';
+  const isClosed=q.status==='closed';
+  const c=gColor(S.groups.indexOf(g)),icon=gIcon(S.groups.indexOf(g));
+  el.innerHTML=`
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span style="font-size:28px">${icon}</span>
+        <div>
+          <div style="font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">${q.label||'Engineering Question'}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
+            <span style="background:${isClosed?'var(--red-lt)':'var(--green-lt)'};color:${isClosed?'var(--red-dk)':'var(--green-dk)'};padding:2px 10px;border-radius:50px;font-size:11px;font-weight:900">${isClosed?'🔴 Closed':'🟢 Open'}</span>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--purple-lt);border-radius:14px;padding:18px 20px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:900;color:var(--purple-dk);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">📝 Your Question</div>
+        <div style="font-size:17px;font-weight:800;color:var(--purple-dk);line-height:1.55">${q.text}</div>
+      </div>
+      ${isClosed&&existing?`
+        <div style="background:var(--gray-lt);border-radius:14px;padding:16px">
+          <div style="font-size:12px;font-weight:900;color:var(--muted);margin-bottom:8px">YOUR ANSWER (submitted)</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text);line-height:1.6">${existing}</div>
+        </div>
+        <p style="font-size:13px;color:var(--muted);font-weight:600;margin-top:10px;text-align:center">This question is now closed. Your answer has been saved.</p>
+      `:isClosed?`
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:36px;margin-bottom:8px">🔴</div>
+          <div style="font-size:16px;font-weight:800;color:var(--red-dk)">This question is closed.</div>
+          <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:4px">Your group did not submit an answer.</div>
+        </div>
+      `:`
+        <label style="display:block;font-size:12px;font-weight:900;color:var(--purple-dk);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Your Group's Answer</label>
+        <textarea id="s-edp-answer" style="width:100%;min-height:120px;padding:12px 16px;border:2px solid #DDD6FE;border-radius:14px;font-size:15px;font-family:Nunito,sans-serif;font-weight:600;outline:none;resize:vertical;color:#1F2937" placeholder="Write your answer here as a group. Think before you type!" onkeyup="this.style.borderColor='#7C3AED'">${existing}</textarea>
+        <button class="btn btn-purple btn-block" style="margin-top:12px" onclick="submitEDPAnswer()">📨 Submit Our Answer</button>
+        ${existing?'<p style="font-size:12px;color:var(--green-dk);font-weight:700;margin-top:8px;text-align:center">✅ You submitted an answer. You can update it while the question is open.</p>':''}
+        <div id="s-edp-submit-alert" style="margin-top:8px"></div>
+      `}
+    </div>`;
+}
+async function submitEDPAnswer(){
   const g=G(S.user?.gid);if(!g)return;
-  $('s-bal').textContent=fmt(g.balance);
-  const txs=g.transactions||[];
-  $('s-earned').textContent=fmt(txs.filter(t=>t.type==='earn').reduce((a,t)=>a+t.amt,0));
-  $('s-spent').textContent=fmt(txs.filter(t=>t.type!=='earn').reduce((a,t)=>a+t.amt,0));
-  const card=CARDS[g.card]||{};
-  $('s-card-badge').innerHTML=`<span style="background:${card.color||'#4C1D95'};color:#fff;padding:5px 14px;border-radius:50px;font-size:13px;font-weight:900">${card.name||g.card}</span>`;
-  $('s-card-desc').textContent=card.desc||'';
-  const ledger=$('s-ledger');
-  if(!txs.length){ledger.innerHTML='<p style="color:var(--muted);font-weight:700;padding:8px 0">No transactions yet — start earning! ⚡</p>';return;}
-  ledger.innerHTML=`<table class="ledger"><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th><th>Balance</th></tr></thead><tbody>
-    ${txs.slice().reverse().map(t=>`<tr><td>${t.d}</td><td>${t.type}</td><td>${t.reason}</td><td class="${t.type}-td">${t.type==='earn'?'+':'−'}${t.amt}V</td><td>⚡${t.bal}V</td></tr>`).join('')}
-  </tbody></table>`;
+  const text=($('s-edp-answer')||{}).value?.trim();
+  if(!text){showAlert('s-edp-submit-alert','⚠️ Write something before submitting!','bad');return;}
+  if(!S.edpQuestion.answers)S.edpQuestion.answers={};
+  S.edpQuestion.answers[g.id]={text,submittedAt:new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})};
+  await save();
+  showAlert('s-edp-submit-alert','✅ Answer submitted!','ok');
+  setTimeout(()=>renderStudentEDPQuestion(),800);
 }
 
 /* ═══════════════ STORE RENDERER ════════════════ */
@@ -1035,3 +1333,4 @@ init();
 </script>
 </body>
 </html>
+
