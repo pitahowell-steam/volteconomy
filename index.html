@@ -361,6 +361,22 @@ nav{
 
 <!-- ══ TEACHER DASHBOARD ══════════════════ -->
 <div id="pg-teacher" class="page hidden">
+  <!-- Class period filter bar -->
+  <div style="background:#fff;border-radius:20px;border:2px solid var(--border);padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 2px 0 #E5E7EB">
+    <span style="font-size:13px;font-weight:900;color:var(--purple-dk)">📚 Class:</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" id="teacher-period-btns">
+      <button onclick="setTeacherPeriod('ALL')" id="tp-ALL" class="btn btn-purple btn-sm">All Classes</button>
+      <button onclick="setTeacherPeriod('1A')" id="tp-1A" class="btn btn-ghost btn-sm">1A</button>
+      <button onclick="setTeacherPeriod('2A')" id="tp-2A" class="btn btn-ghost btn-sm">2A</button>
+      <button onclick="setTeacherPeriod('5A')" id="tp-5A" class="btn btn-ghost btn-sm">5A</button>
+      <button onclick="setTeacherPeriod('6A')" id="tp-6A" class="btn btn-ghost btn-sm">6A</button>
+      <button onclick="setTeacherPeriod('1B')" id="tp-1B" class="btn btn-ghost btn-sm">1B</button>
+      <button onclick="setTeacherPeriod('2B')" id="tp-2B" class="btn btn-ghost btn-sm">2B</button>
+      <button onclick="setTeacherPeriod('5B')" id="tp-5B" class="btn btn-ghost btn-sm">5B</button>
+      <button onclick="setTeacherPeriod('6B')" id="tp-6B" class="btn btn-ghost btn-sm">6B</button>
+    </div>
+    <div style="margin-left:auto;font-size:13px;font-weight:700;color:var(--muted)" id="teacher-period-label">Showing all classes</div>
+  </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="tTab('groups')">👥 Groups</button>
     <button class="tab-btn" onclick="tTab('store')">🛒 Store Items</button>
@@ -730,9 +746,9 @@ async function loadState(){
   if(!S.earn.length)S.earn=[...DEARN];
   if(!S.groups.length){
     S.groups=[
-      {id:'g1',period:'1A',name:'Team Ohm',pin:'1111',card:'A',surprise:null,balance:100,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100}]},
-      {id:'g2',period:'1A',name:'Team Faraday',pin:'2222',card:'B',surprise:null,balance:105,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100},{d:'Day 1',type:'earn',amt:5,reason:'Quick Write',bal:105}]},
-      {id:'g3',period:'2A',name:'Team Tesla',pin:'3333',card:'C',surprise:null,balance:88,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100},{d:'Day 1',type:'spend',amt:12,reason:'Extra alligator clips',bal:88}]},
+      {id:'g1',period:'1A',name:'Team Ohm',pin:'1111',card:'A',surprise:null,members:['Alex','Jordan','Sam'],balance:100,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100}]},
+      {id:'g2',period:'1A',name:'Team Faraday',pin:'2222',card:'B',surprise:null,members:[],balance:105,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100},{d:'Day 1',type:'earn',amt:5,reason:'Quick Write',bal:105}]},
+      {id:'g3',period:'2A',name:'Team Tesla',pin:'3333',card:'C',surprise:null,members:['Casey','Riley'],balance:88,transactions:[{d:'Start',type:'earn',amt:100,reason:'Starting balance',bal:100},{d:'Day 1',type:'spend',amt:12,reason:'Extra alligator clips',bal:88}]},
     ];
     await save();
   }
@@ -755,7 +771,7 @@ const TSEC_COLORS=[
 function gColor(idx){return GROUP_COLORS[idx%GROUP_COLORS.length]}
 function gIcon(idx){return GROUP_ICONS[idx%GROUP_ICONS.length]}
 function showAlert(id,msg,type='ok'){const e=$(id);if(!e)return;e.innerHTML=`<div class="alert alert-${type}">${msg}</div>`;setTimeout(()=>{e.innerHTML=''},3500);}
-function closeModals(){['modal-tx','modal-item','modal-earn'].forEach(id=>$(id).classList.add('hidden'));}
+function closeModals(){['modal-tx','modal-item','modal-earn','modal-edit-group'].forEach(id=>$(id).classList.add('hidden'));}
 
 /* ═══════════════ NAVIGATION ════════════════════ */
 function gotoPage(pg){
@@ -796,6 +812,8 @@ function showForm(which){
   if(which==='none'){$('pg-login').classList.remove('hidden');return;}
   $('pg-'+which+'-form').classList.remove('hidden');
   if(which==='student'){
+    buildPeriodGrid();
+    showStep('period');
     const PERIODS=['1A','2A','5A','6A','1B','2B','5B','6B'];
     const sel=$('s-grp-sel');
     const withPeriod=S.groups.filter(g=>g.period);
@@ -851,6 +869,8 @@ function sTab(tab){
 function renderTGroups(){
   const el=$('t-groups-list');
   if(!S.groups.length){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">No groups yet — go to Setup tab to add groups! 🚀</div>';return;}
+  const activeGroups=teacherPeriod==='ALL'?S.groups:S.groups.filter(g=>g.period===teacherPeriod);
+  if(teacherPeriod!=='ALL'&&!activeGroups.length){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-weight:700">No groups in Period '+teacherPeriod+' yet. Go to Setup to add groups!</div>';return;}
   const PERIODS=['1A','2A','5A','6A','1B','2B','5B','6B'];
   const PERIOD_COLORS={
     '1A':'#4C1D95','2A':'#0F6E56','5A':'#78350F','6A':'#1E3A8A',
@@ -882,6 +902,7 @@ function renderTGroups(){
         <div class="group-info">
           <div class="group-name">${g.name}</div>
           <div class="group-card-lbl">${CARDS[g.card]?.name||g.card}</div>
+          ${(g.members&&g.members.length)?'<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:2px">👥 '+g.members.join(' · ')+'</div>':'<div style="font-size:11px;color:#F59E0B;font-weight:700;margin-top:2px">⚠️ Members not entered yet</div>'}
         </div>
         <div class="group-bal" style="color:${bc}">⚡${bal}V</div>
         <div class="group-actions">
@@ -889,6 +910,7 @@ function renderTGroups(){
           <button class="btn btn-teal btn-sm" onclick="openTx('${g.id}','spend')">🛒 Spend</button>
           <button class="btn btn-red btn-sm" onclick="openTx('${g.id}','fine')">⚠️ Fine</button>
           <button class="btn btn-ghost btn-sm" onclick="viewLedger('${g.id}')">📜 Ledger</button>
+          <button class="btn btn-sm" style="background:var(--purple-lt);color:var(--purple-dk);border:none" onclick="openEditGroup('${g.id}')">✏️ Edit</button>
         </div>
       </div>`;
     });
@@ -905,6 +927,7 @@ function renderTGroups(){
         <div class="group-info">
           <div class="group-name">${g.name}</div>
           <div class="group-card-lbl">${CARDS[g.card]?.name||g.card}</div>
+          ${(g.members&&g.members.length)?'<div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:2px">👥 '+g.members.join(' · ')+'</div>':'<div style="font-size:11px;color:#F59E0B;font-weight:700;margin-top:2px">⚠️ Members not entered yet</div>'}
         </div>
         <div class="group-bal" style="color:${bc}">⚡${bal}V</div>
         <div class="group-actions">
@@ -912,6 +935,7 @@ function renderTGroups(){
           <button class="btn btn-teal btn-sm" onclick="openTx('${g.id}','spend')">🛒 Spend</button>
           <button class="btn btn-red btn-sm" onclick="openTx('${g.id}','fine')">⚠️ Fine</button>
           <button class="btn btn-ghost btn-sm" onclick="viewLedger('${g.id}')">📜 Ledger</button>
+          <button class="btn btn-sm" style="background:var(--purple-lt);color:var(--purple-dk);border:none" onclick="openEditGroup('${g.id}')">✏️ Edit</button>
         </div>
       </div>`;
     });
@@ -1058,7 +1082,154 @@ function filterManage(period){
 }
 async function changePw(){const n=$('npw1').value,c=$('npw2').value;if(!n||n.length<4){showAlert('pw-alert','⚠️ Min 4 characters.','bad');return;}if(n!==c){showAlert('pw-alert','⚠️ Passwords don\'t match!','bad');return;}S.pw=n;await save();showAlert('pw-alert','✅ Password updated!','ok');$('npw1').value='';$('npw2').value='';}
 
+
 /* ═══════════════ STUDENT ACCOUNT ═══════════════ */
+function renderSAccount(){
+  const g=G(S.user?.gid);if(!g)return;
+  // Check if members need to be entered first
+  if(!g.members||!g.members.length){showMembersEntry();return;}
+  $('s-bal').textContent=fmt(g.balance);
+  const txs=g.transactions||[];
+  $('s-earned').textContent=fmt(txs.filter(t=>t.type==='earn').reduce((a,t)=>a+t.amt,0));
+  $('s-spent').textContent=fmt(txs.filter(t=>t.type!=='earn').reduce((a,t)=>a+t.amt,0));
+  const purchases=txs.filter(t=>t.type==='spend');
+  $('s-item-count').textContent=purchases.length;
+  // Render full problem card
+  const cardFull=$('s-card-full');
+  if(cardFull){
+    const card=CARDS[g.card]||{};
+    const det=CARD_DETAILS[g.card]||{};
+    if(!g.card||!card.name){
+      cardFull.innerHTML='<div class="card"><div class="card-title">🃏 Problem Card</div><p style="font-size:14px;color:var(--muted);font-weight:600;margin-top:6px">No card assigned yet — ask your teacher!</p></div>';
+    } else {
+      cardFull.innerHTML=`<div style="border-radius:20px;overflow:hidden;border:3px solid ${card.color||'#4C1D95'}">
+        <div style="background:${card.color||'#4C1D95'};padding:20px;text-align:center">
+          <div style="font-size:52px;margin-bottom:8px">${det.emoji||'🃏'}</div>
+          <div style="font-size:11px;font-weight:900;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${card.name}</div>
+          <div style="font-size:22px;font-weight:900;color:#fff">${det.title||''}</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;font-weight:700">${det.client||''}</div>
+        </div>
+        <div style="background:#fff;padding:18px 20px">
+          <div style="font-size:12px;font-weight:900;color:${card.color||'#4C1D95'};text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">📋 Your Mission</div>
+          <div style="font-size:14px;font-weight:700;color:#1F2937;margin-bottom:16px;line-height:1.6">${det.mission||card.desc||''}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+            <div style="background:#DCFCE7;border-radius:12px;padding:12px">
+              <div style="font-size:11px;font-weight:900;color:#14532D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">✅ Must Do</div>
+              ${(det.must||[]).map(m=>`<div style="font-size:12px;font-weight:700;color:#14532D;margin-bottom:5px;line-height:1.4">• ${m}</div>`).join('')}
+            </div>
+            <div style="background:#FEE2E2;border-radius:12px;padding:12px">
+              <div style="font-size:11px;font-weight:900;color:#7F1D1D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">🚫 Limits</div>
+              ${(det.limits||[]).map(l=>`<div style="font-size:12px;font-weight:700;color:#7F1D1D;margin-bottom:5px;line-height:1.4">• ${l}</div>`).join('')}
+            </div>
+          </div>
+          <div style="background:#FEF3C7;border-radius:12px;padding:12px;margin-bottom:10px">
+            <div style="font-size:11px;font-weight:900;color:#78350F;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">🛒 Your Starter Kit</div>
+            <div style="font-size:12px;font-weight:700;color:#78350F;line-height:1.6">${(det.kit||[]).join('  ·  ')}</div>
+          </div>
+          <div style="background:#EDE9FE;border-radius:12px;padding:12px">
+            <div style="font-size:11px;font-weight:900;color:#4C1D95;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">🔒 Surprise Constraint</div>
+            <div style="font-size:13px;font-weight:700;color:#4C1D95;line-height:1.5">${g.surprise||'Your teacher will reveal this at the end of Day 1 — flip your card over!'}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+  // Recent transactions
+  const ledger=$('s-ledger');if(!ledger)return;
+  const recent=txs.slice(-5).reverse();
+  if(!recent.length){ledger.innerHTML='<p style="color:var(--muted);font-weight:700;padding:8px 0">No transactions yet — earn your first Volts! ⚡</p>';return;}
+  ledger.innerHTML=`<table class="ledger"><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Amount</th><th>Balance</th></tr></thead><tbody>
+    ${recent.map(t=>`<tr><td>${t.d}</td><td>${t.type}</td><td>${t.reason}</td><td class="${t.type}-td">${t.type==='earn'?'+':'-'}${t.amt}V</td><td>⚡${t.bal}V</td></tr>`).join('')}
+  </tbody></table>
+  ${txs.length>5?`<p style="font-size:12px;color:var(--muted);font-weight:700;margin-top:8px;text-align:center">Showing last 5 of ${txs.length} transactions</p>`:''}`;
+}
+
+/* ── FIRST LOGIN: member name entry ── */
+function showMembersEntry(){
+  // Show a fullscreen overlay asking for member names
+  const g=G(S.user?.gid);if(!g)return;
+  const card=CARDS[g.card]||{};
+  const det=CARD_DETAILS[g.card]||{};
+  const overlay=document.createElement('div');
+  overlay.id='members-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:#F1F0FF;z-index:999;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML=`<div style="background:#fff;border-radius:28px;border:3px solid #DDD6FE;padding:32px;max-width:480px;width:100%;box-shadow:0 8px 0 #DDD6FE">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:52px;margin-bottom:8px">${det.emoji||'⚡'}</div>
+      <div style="font-size:24px;font-weight:900;color:#4C1D95;margin-bottom:4px">Welcome, ${g.name}!</div>
+      <div style="font-size:14px;color:#6B7280;font-weight:700">Before you start, enter the names of everyone in your group.</div>
+    </div>
+    ${g.card?`<div style="background:#EDE9FE;border-radius:14px;padding:12px 16px;margin-bottom:20px;text-align:center">
+      <div style="font-size:12px;font-weight:900;color:#4C1D95;margin-bottom:2px">YOUR PROJECT CARD</div>
+      <div style="font-size:16px;font-weight:900;color:#4C1D95">${det.emoji||''} ${card.name||g.card}</div>
+    </div>`:''}
+    <div id="member-inputs">
+      ${[1,2,3].map(n=>`<div style="margin-bottom:12px">
+        <label style="display:block;font-size:12px;font-weight:900;color:#4C1D95;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Person ${n}</label>
+        <input id="mbr-${n}" class="field-input" placeholder="First name ${n===1?'(required)':'(if in your group)'}" style="font-size:15px">
+      </div>`).join('')}
+    </div>
+    <div id="members-alert" style="margin-bottom:10px"></div>
+    <button onclick="saveMembers()" style="width:100%;padding:14px;background:#7C3AED;color:#fff;border:none;border-radius:50px;font-size:16px;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif;box-shadow:0 4px 0 #4C1D95">Let's Go! ⚡</button>
+  </div>`;
+  document.body.appendChild(overlay);
+}
+async function saveMembers(){
+  const g=G(S.user?.gid);if(!g)return;
+  const m1=($('mbr-1')||{}).value?.trim();
+  const m2=($('mbr-2')||{}).value?.trim();
+  const m3=($('mbr-3')||{}).value?.trim();
+  if(!m1){
+    const al=$('members-alert');
+    if(al)al.innerHTML='<div style="background:#FEE2E2;color:#7F1D1D;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;margin-bottom:8px">⚠️ Enter at least one name!</div>';
+    return;
+  }
+  g.members=[m1,m2,m3].filter(Boolean);
+  await save();
+  const ov=document.getElementById('members-overlay');
+  if(ov)ov.remove();
+  renderSAccount();
+  setTimeout(()=>{renderPurchases();renderStudentEDPQuestion();},100);
+}
+
+/* ── EDIT GROUP MODAL (teacher) ── */
+function openEditGroup(gid){
+  const g=G(gid);if(!g)return;
+  $('eg-id').value=gid;
+  $('eg-period').value=g.period||'';
+  $('eg-name').value=g.name||'';
+  $('eg-card').value=g.card||'A';
+  $('eg-pin').value=g.pin||'';
+  // Members
+  const members=g.members||[];
+  $('eg-m1').value=members[0]||'';
+  $('eg-m2').value=members[1]||'';
+  $('eg-m3').value=members[2]||'';
+  $('modal-edit-group').classList.remove('hidden');
+}
+async function saveEditGroup(){
+  const gid=$('eg-id').value;
+  const g=G(gid);if(!g)return;
+  const period=$('eg-period').value;
+  const name=$('eg-name').value.trim();
+  const card=$('eg-card').value;
+  const pin=$('eg-pin').value.trim();
+  const m1=$('eg-m1').value.trim();
+  const m2=$('eg-m2').value.trim();
+  const m3=$('eg-m3').value.trim();
+  if(!name){alert('Group name is required!');return;}
+  if(pin&&pin.length<4){alert('PIN must be 4 digits if changing.');return;}
+  g.period=period||g.period;
+  g.name=name;
+  g.card=card;
+  if(pin)g.pin=pin;
+  g.members=[m1,m2,m3].filter(Boolean);
+  await save();
+  closeModals();
+  renderTGroups();
+  renderManage();
+  showAlert('t-alert',`✅ ${g.name} updated!`,'ok');
+}
 
 
 /* ═══ PURCHASES TAB ══ */
@@ -1275,10 +1446,12 @@ function buildTicker(){
 function renderBoard(){
   const grid=$('board-grid');if(!grid)return;
   if(!S.groups.length){grid.innerHTML='<div style="color:rgba(255,255,255,.5);text-align:center;padding:48px;grid-column:1/-1;font-size:18px;font-weight:700">No groups yet — teacher must add groups in Setup! 🚀</div>';return;}
-  const sorted=[...S.groups].sort((a,b)=>b.balance-a.balance);
+  const visibleGroups=teacherPeriod==='ALL'?S.groups:S.groups.filter(g=>g.period===teacherPeriod);
+  if(!visibleGroups.length){grid.innerHTML='<div style="color:rgba(255,255,255,.5);text-align:center;padding:40px;grid-column:1/-1;font-size:16px;font-weight:700">No groups in Period '+teacherPeriod+' yet.</div>';return;}
+  const sorted=[...visibleGroups].sort((a,b)=>b.balance-a.balance);
   const maxBal=Math.max(...S.groups.map(g=>g.balance),150);
-  const avg=Math.round(S.groups.reduce((a,g)=>a+g.balance,0)/S.groups.length);
-  $('bf-groups').textContent=S.groups.length;
+  const avg=Math.round(visibleGroups.reduce((a,g)=>a+g.balance,0)/visibleGroups.length);
+  $('bf-groups').textContent=visibleGroups.length;
   $('bf-leader').textContent=sorted[0]?.name||'—';
   $('bf-avg').textContent='⚡'+fmt(avg);
   $('bf-top').textContent='⚡'+fmt(sorted[0]?.balance||0);
@@ -1328,9 +1501,108 @@ function confetti(){
 }
 
 /* ═══════════════ INIT ═══════════════════════════ */
+
+/* ── TEACHER CLASS PERIOD FILTER ── */
+let teacherPeriod='ALL';
+function setTeacherPeriod(p){
+  teacherPeriod=p;
+  document.querySelectorAll('[id^="tp-"]').forEach(btn=>{
+    const isPurple=btn.id==='tp-'+p;
+    btn.className='btn btn-sm '+(isPurple?'btn-purple':'btn-ghost');
+  });
+  const lbl=$('teacher-period-label');
+  if(lbl)lbl.textContent=p==='ALL'?'Showing all classes':'Showing Period '+p+' only';
+  renderTGroups();
+  renderBoard(); // also filter board
+}
+
+/* ── STUDENT LOGIN STEPS ── */
+function showStep(step){
+  $('s-step-period').classList.toggle('hidden',step!=='period');
+  $('s-step-group').classList.toggle('hidden',step!=='group');
+}
+function pickPeriod(p){
+  // Filter group select to this period only
+  const sel=$('s-grp-sel');
+  const periodGroups=S.groups.filter(g=>g.period===p);
+  if(!periodGroups.length){alert('No groups in Period '+p+' yet. Ask your teacher!');return;}
+  sel.innerHTML=periodGroups.map(g=>`<option value="${g.id}">${gIcon(S.groups.indexOf(g))} ${g.name}</option>`).join('');
+  $('s-period-heading').textContent='Period '+p+' — Log In';
+  $('spin').value='';
+  $('spin-err').classList.add('hidden');
+  showStep('group');
+}
+
+/* ── BUILD STUDENT PERIOD BUTTON GRID ── */
+function buildPeriodGrid(){
+  const grid=$('period-btn-grid');if(!grid)return;
+  const PERIODS=['1A','2A','5A','6A','1B','2B','5B','6B'];
+  const P_COLORS={
+    '1A':'#4C1D95','2A':'#0F6E56','5A':'#78350F','6A':'#1E3A8A',
+    '1B':'#7F1D1D','2B':'#134E4A','5B':'#7C2D12','6B':'#1E40AF'
+  };
+  const P_BG={
+    '1A':'#EDE9FE','2A':'#CCFBF1','5A':'#FEF3C7','6A':'#DBEAFE',
+    '1B':'#FEE2E2','2B':'#D0EFED','5B':'#FFEDD5','6B':'#DBEAFE'
+  };
+  grid.innerHTML=PERIODS.map(p=>{
+    const count=S.groups.filter(g=>g.period===p).length;
+    const c=P_COLORS[p]||'#4C1D95';
+    const bg=P_BG[p]||'#EDE9FE';
+    return `<button onclick="pickPeriod('${p}')"
+      style="padding:20px 12px;border-radius:20px;border:3px solid ${c};background:${bg};cursor:pointer;font-family:Nunito,sans-serif;transition:all .15s;box-shadow:0 4px 0 ${c}"
+      onmouseover="this.style.transform='translateY(-3px)'"
+      onmouseout="this.style.transform=''">
+      <div style="font-size:28px;font-weight:900;color:${c}">Period ${p}</div>
+      <div style="font-size:13px;font-weight:700;color:${c};opacity:.7;margin-top:2px">${count} group${count!==1?'s':''}</div>
+    </button>`;
+  }).join('');
+}
+
 async function init(){await loadState();showForm('none');}
 init();
 </script>
+
+<div id="modal-edit-group" class="hidden">
+  <div class="modal-overlay">
+    <div class="modal-box" style="max-width:500px">
+      <div class="modal-title">✏️ Edit Group</div>
+      <input type="hidden" id="eg-id">
+      <label class="field-label">Class Period</label>
+      <select class="field-input" id="eg-period" style="appearance:auto">
+        <option value="">— Select —</option>
+        <option value="1A">1A</option><option value="2A">2A</option>
+        <option value="5A">5A</option><option value="6A">6A</option>
+        <option value="1B">1B</option><option value="2B">2B</option>
+        <option value="5B">5B</option><option value="6B">6B</option>
+      </select>
+      <label class="field-label">Group Name</label>
+      <input class="field-input" id="eg-name" placeholder="Group name">
+      <label class="field-label">Problem Card</label>
+      <select class="field-input" id="eg-card" style="appearance:auto">
+        <option value="A">💡 Card A – Night-Light</option>
+        <option value="B">🚨 Card B – Alarm/Buzzer</option>
+        <option value="C">👕 Card C – Wearable LED</option>
+      </select>
+      <label class="field-label">New PIN (leave blank to keep current)</label>
+      <input class="field-input" id="eg-pin" placeholder="4 digits or leave blank" maxlength="4">
+      <div style="margin-top:16px;border-top:2px solid #F3F4F6;padding-top:16px">
+        <div style="font-size:12px;font-weight:900;color:#4C1D95;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">👥 Group Members</div>
+        <label class="field-label">Person 1</label>
+        <input class="field-input" id="eg-m1" placeholder="First name">
+        <label class="field-label">Person 2</label>
+        <input class="field-input" id="eg-m2" placeholder="First name">
+        <label class="field-label">Person 3</label>
+        <input class="field-input" id="eg-m3" placeholder="First name">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost btn-sm" onclick="closeModals()">Cancel</button>
+        <button class="btn btn-purple btn-sm" onclick="saveEditGroup()">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
+
 
